@@ -12,12 +12,20 @@ SocketCANTransceiver::SocketCANTransceiver(std::string ifrName)
     CreateSocket();
     BindSocket(IfrIndex(ifrName));
 }
+
+SocketCANTransceiver::~SocketCANTransceiver() {
+    if (close(socket_ < 0)) {
+        perror("Close");
+    }
+}
+
 void SocketCANTransceiver::CreateSocket() {
     if ((socket_ = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
         perror("Socket");
         //@todo Error handling
     }
 }
+
 
 void SocketCANTransceiver::BindSocket(struct sockaddr_can addr) {
     if (bind(socket_, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
@@ -37,4 +45,17 @@ struct sockaddr_can SocketCANTransceiver::IfrIndex(std::string ifrName) {
     addr.can_ifindex = ifr.ifr_ifindex;
 
     return addr;
+}
+
+void SocketCANTransceiver::SendCANFrame(struct can_frame frame) {
+    ssize_t nbytes = write(socket_, &frame, sizeof(struct can_frame));
+}
+
+void SocketCANTransceiver::SendCANFrame(struct canfd_frame frame) {
+    ssize_t nbytes = write(socket_, &frame, sizeof(struct canfd_frame));
+}
+
+
+bool SocketCANTransceiver::Send(uint32_t canid, std::vector<uint8_t> data) {
+    return false;
 }
