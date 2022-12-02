@@ -7,9 +7,9 @@
 #include <string>
 #include "SocketCANTransceiver.h"
 
-SocketCANTransceiver::SocketCANTransceiver(std::string ifrName)
+SocketCANTransceiver::SocketCANTransceiver(std::string ifrName, bool can_fd)
 : socket_(0) {
-    socket_ = socketcanOpen(ifrName.c_str(), 1);
+    socket_ = socketcanOpen(ifrName.c_str(), can_fd);
 }
 
 SocketCANTransceiver::~SocketCANTransceiver() {
