@@ -18,6 +18,8 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
+#include "socketcan.h"
+
 class SocketCANTransceiver {
   public:
     explicit SocketCANTransceiver(std::string ifrName);
