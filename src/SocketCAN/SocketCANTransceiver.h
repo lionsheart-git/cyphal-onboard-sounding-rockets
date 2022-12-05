@@ -4,8 +4,8 @@
  * @date 01.12.22
 */
 
-#ifndef SOCKETCAN__SOCKETCANTRANSCEIVER_H_
-#define SOCKETCAN__SOCKETCANTRANSCEIVER_H_
+#ifndef SOCKETCAN_SOCKETCANTRANSCEIVER_H_
+#define SOCKETCAN_SOCKETCANTRANSCEIVER_H_
 
 #include <cstdio>
 #include <cstring>
@@ -26,9 +26,9 @@ class SocketCANTransceiver {
     explicit SocketCANTransceiver(std::string ifrName, bool can_fd);
     ~SocketCANTransceiver();
 
-    void SendCanardFrame(CanardFrame const & frame, uint64_t const & timeout_usec) const;
-    CanardFrame ReceiveCanardFrame(uint64_t const & timeout_usec) const;
-    void CanardFilter(size_t const num_configs, CanardFilter const & configs) const;
+    void SendCanardFrame(CanardFrame const &frame, uint64_t const &timeout_usec) const;
+    CanardFrame ReceiveCanardFrame(uint64_t const &timeout_usec) const;
+    void CanardFilter(size_t const num_configs, CanardFilter const &configs) const;
 
     bool Send(uint32_t canid, std::vector<uint8_t> data);
     uint8_t Receive();
@@ -37,9 +37,8 @@ class SocketCANTransceiver {
     void SendCANFrame(struct can_frame frame) const;
     void SendCANFrame(struct canfd_frame frame);
 
-
     int socket_;
 
 };
 
-#endif //SOCKETCAN__SOCKETCANTRANSCEIVER_H_
+#endif //SOCKETCAN_SOCKETCANTRANSCEIVER_H_
