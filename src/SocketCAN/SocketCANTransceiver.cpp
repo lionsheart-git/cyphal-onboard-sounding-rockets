@@ -28,5 +28,27 @@ void SocketCANTransceiver::SendCANFrame(struct canfd_frame frame) {
 
 
 bool SocketCANTransceiver::Send(uint32_t canid, std::vector<uint8_t> data) {
-    return false;
+    struct canfd_frame frame{};
+
+    frame.can_id = canid;
+    if (data.size() > 8) {
+        return false;
+    }
+
+    frame.len = data.size();
+    std::copy(data.begin(), data.end(), frame.data);
+
+    SendCANFrame(frame);
+
+    return true;
+}
+
+uint8_t SocketCANTransceiver::Receive() {
+    struct can_frame frame{};
+
+    int nbytes = read(socket_, &frame, sizeof(struct can_frame));
+
+    if (nbytes < 0) {
+        return 0;
+    }
 }

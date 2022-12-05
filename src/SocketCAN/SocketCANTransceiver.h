@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <cstring>
 #include <unistd.h>
+#include <vector>
 
 #include <net/if.h>
 #include <sys/ioctl.h>
@@ -22,12 +23,18 @@
 
 class SocketCANTransceiver {
   public:
-    explicit SocketCANTransceiver(std::string ifrName);
+    explicit SocketCANTransceiver(std::string ifrName, bool can_fd);
+    ~SocketCANTransceiver();
+
+    void SendCanardFrame(CanardFrame const & frame, uint64_t const & timeout_usec);
+    CanardFrame ReceiveCanardFrame(uint64_t const & timeout_usec);
+
+    bool Send(uint32_t canid, std::vector<uint8_t> data);
+    uint8_t Receive();
 
   private:
-    void CreateSocket();
-    void BindSocket(struct sockaddr_can addr);
-    struct sockaddr_can IfrIndex(std::string ifrName);
+    void SendCANFrame(struct can_frame frame) const;
+    void SendCANFrame(struct canfd_frame frame);
 
 
     int socket_;
