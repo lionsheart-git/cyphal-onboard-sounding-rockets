@@ -1,3 +1,6 @@
 [submodule "Lib/libcanard"]
 	path = Lib/libcanard
 	url = git@github.com:OpenCyphal/libcanard.git
+[submodule "src/Lib/o1heap"]
+	path = src/Lib/o1heap
+	url = git@github.com:pavel-kirienko/o1heap.git
