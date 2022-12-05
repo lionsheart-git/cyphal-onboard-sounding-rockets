@@ -4,3 +4,6 @@
 [submodule "src/Lib/o1heap"]
 	path = src/Lib/o1heap
 	url = git@github.com:pavel-kirienko/o1heap.git
+[submodule "src/Lib/public_regulated_data_types"]
+	path = src/Lib/public_regulated_data_types
+	url = git@github.com:OpenCyphal/public_regulated_data_types.git
