@@ -53,8 +53,9 @@ uint8_t SocketCANTransceiver::Receive() {
 
     return nbytes;
 }
-void SocketCANTransceiver::SendCanardFrame(CanardFrame const &frame, uint64_t const &timeout_usec) const {
-    socketcanPush(socket_, &frame, timeout_usec);
+
+int16_t SocketCANTransceiver::SendCanardFrame(CanardFrame const &frame, uint64_t const &timeout_usec) const {
+    return socketcanPush(socket_, &frame, timeout_usec);
 }
 
 CanardFrame SocketCANTransceiver::ReceiveCanardFrame(uint64_t const &timeout_usec) const {
