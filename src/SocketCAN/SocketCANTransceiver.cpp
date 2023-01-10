@@ -58,16 +58,14 @@ int16_t SocketCANTransceiver::SendCanardFrame(CanardFrame const &frame, uint64_t
     return socketcanPush(socket_, &frame, timeout_usec);
 }
 
-CanardFrame SocketCANTransceiver::ReceiveCanardFrame(uint64_t const &timeout_usec) const {
-    CanardFrame out_frame{};
-    CanardMicrosecond out_timestamp_usec{};
+//@todo Figure out how to encapsulate payload so the frame can be returned without need for all the pointers.
+int16_t SocketCANTransceiver::ReceiveCanardFrame(uint64_t const &timeout_usec,
+                                                 uint64_t &out_timestamp_usec,
+                                                 CanardFrame &out_frame,
+                                                 uint8_t buf[]) const {
+    return socketcanPop(socket_, &out_frame, &out_timestamp_usec, sizeof(uint8_t) * CANARD_MTU_CAN_FD, buf, timeout_usec,
+                        nullptr);
 
-    char payload_buffer[CANARD_MTU_CAN_FD];
-
-    socketcanPop(socket_, &out_frame, &out_timestamp_usec, sizeof(payload_buffer), &payload_buffer, timeout_usec,
-                 reinterpret_cast<bool *const>(1));
-
-    return out_frame;
 }
 
 void SocketCANTransceiver::CanardFilter(size_t const num_configs, struct CanardFilter const &configs) const {

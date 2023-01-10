@@ -27,7 +27,10 @@ class SocketCANTransceiver {
     ~SocketCANTransceiver();
 
     int16_t SendCanardFrame(CanardFrame const &frame, uint64_t const &timeout_usec) const;
-    CanardFrame ReceiveCanardFrame(uint64_t const &timeout_usec) const;
+    int16_t ReceiveCanardFrame(uint64_t const &timeout_usec,
+                               uint64_t &out_timestamp_usec,
+                               CanardFrame &out_frame,
+                               uint8_t buf[]) const;
     void CanardFilter(size_t const num_configs, CanardFilter const &configs) const;
 
     bool Send(uint32_t canid, std::vector<uint8_t> data);

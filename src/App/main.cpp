@@ -136,7 +136,8 @@ int main() {
             // The internal state machine will sort them out and remove duplicates automatically.
             CanardFrame frame = {0};
             uint8_t buf[CANARD_MTU_CAN_FD] = {0};
-            const int16_t socketcan_result = socketcanPop(3, &frame, NULL, sizeof(buf), buf, 0, NULL);
+            uint64_t out_timestamp_usec;
+            int16_t socketcan_result = transceiver.ReceiveCanardFrame(0, out_timestamp_usec, frame, buf);
             if (socketcan_result == 0)  // The read operation has timed out with no frames, nothing to do here.
             {
                 break;
