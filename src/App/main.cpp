@@ -19,6 +19,7 @@
 #include "uavcan/node/Heartbeat_1_0.h"
 #include "uavcan/node/GetInfo_1_0.h"
 #include "uavcan/_register/Value_1_0.h"
+#include "uavcan/pnp/NodeIDAllocationData_2_0.h"
 
 // Defines
 #define O1HEAP_MEM_SIZE 4096
@@ -112,8 +113,82 @@ static void sendResponse(CanardTxQueue *tx_queue,
     send(tx_queue, ins, original_request_transfer->timestamp_usec + MEGA, &meta, payload_size, payload);
 }
 
+int node_heartbeat = 0;
+int node_pnp = 0;
 
-//@todo: Figure out why GetInfo response is send only sometimes
+/// Invoked every second.
+static void handle1HzLoop(CanardInstance &canard,
+                          CanardTxQueue &tx_queue,
+                          O1HeapInstance const *heap,
+                          const CanardMicrosecond monotonic_time,
+                          CanardMicrosecond const started_at) {
+    const bool anonymous = canard.node_id > CANARD_NODE_ID_MAX;
+    // Publish heartbeat every second unless the local node is anonymous. Anonymous nodes shall not publish heartbeat.
+    if (!anonymous) {
+        uavcan_node_Heartbeat_1_0 heartbeat = {0};
+        heartbeat.uptime = (uint32_t) ((monotonic_time - started_at) / MEGA);
+        heartbeat.mode.value = uavcan_node_Mode_1_0_OPERATIONAL;
+        const O1HeapDiagnostics heap_diag = o1heapGetDiagnostics(heap);
+        if (heap_diag.oom_count > 0) {
+            heartbeat.health.value = uavcan_node_Health_1_0_CAUTION;
+        } else {
+            heartbeat.health.value = uavcan_node_Health_1_0_NOMINAL;
+        }
+
+        uint8_t serialized[uavcan_node_Heartbeat_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_] = {0};
+        size_t serialized_size = sizeof(serialized);
+        const int8_t err = uavcan_node_Heartbeat_1_0_serialize_(&heartbeat, &serialized[0], &serialized_size);
+        assert(err >= 0);
+        if (err >= 0) {
+            const CanardTransferMetadata transfer = {
+                .priority       = CanardPriorityNominal,
+                .transfer_kind  = CanardTransferKindMessage,
+                .port_id        = uavcan_node_Heartbeat_1_0_FIXED_PORT_ID_,
+                .remote_node_id = CANARD_NODE_ID_UNSET,
+                .transfer_id    = (CanardTransferID) (node_heartbeat++),
+            };
+            send(&tx_queue,
+                 &canard,
+                 monotonic_time + MEGA,  // Set transmission deadline 1 second, optimal for heartbeat.
+                 &transfer,
+                 serialized_size,
+                 &serialized[0]);
+        }
+    } else  // If we don't have a node-ID, obtain one by publishing allocation request messages until we get a response.
+    {
+        // The Specification says that the allocation request publication interval shall be randomized.
+        // We implement randomization by calling rand() at fixed intervals and comparing it against some threshold.
+        // There are other ways to do it, of course. See the docs in the Specification or in the DSDL definition here:
+        // https://github.com/OpenCyphal/public_regulated_data_types/blob/master/uavcan/pnp/8165.NodeIDAllocationData.2.0.dsdl
+        // Note that a high-integrity/safety-certified application is unlikely to be able to rely on this feature.
+        if (rand() > RAND_MAX / 2)  // NOLINT
+        {
+            // Note that this will only work over CAN FD. If you need to run PnP over Classic CAN, use message v1.0.
+            uavcan_pnp_NodeIDAllocationData_2_0 msg = {0};
+            msg.node_id.value = UINT16_MAX;
+            getUniqueID(msg.unique_id);
+            uint8_t serialized[uavcan_pnp_NodeIDAllocationData_2_0_SERIALIZATION_BUFFER_SIZE_BYTES_] = {0};
+            size_t serialized_size = sizeof(serialized);
+            const int8_t err = uavcan_pnp_NodeIDAllocationData_2_0_serialize_(&msg, &serialized[0], &serialized_size);
+            assert(err >= 0);
+            if (err >= 0) {
+                const CanardTransferMetadata transfer = {
+                    .priority       = CanardPrioritySlow,
+                    .transfer_kind  = CanardTransferKindMessage,
+                    .port_id        = uavcan_pnp_NodeIDAllocationData_2_0_FIXED_PORT_ID_,
+                    .remote_node_id = CANARD_NODE_ID_UNSET,
+                    .transfer_id    = (CanardTransferID) (node_pnp++),
+                };
+                send(&tx_queue,
+                     &canard, // The response will arrive asynchronously eventually.
+                     monotonic_time + MEGA,
+                     &transfer,
+                     serialized_size,
+                     &serialized[0]);
+            }
+        }
+    }
+}
 
 int main() {
 
@@ -157,139 +232,86 @@ int main() {
         return -res;
     }
 
-    size_t last_time = time(NULL);
+    // Now the node is initialized and we're ready to roll.
+    auto started_at = getMonotonicMicroseconds();
+    const CanardMicrosecond fast_loop_period = MEGA / 50;
+    CanardMicrosecond next_fast_iter_at = started_at + fast_loop_period;
+    CanardMicrosecond next_1_hz_iter_at = started_at + MEGA;
+    CanardMicrosecond next_01_hz_iter_at = started_at + MEGA * 10;
 
-    // Main control loop. Run until break condition is found.
-    for (;;) {
-        if (time(NULL) > last_time + 1) {
-            // Sleep for 1 second so our uptime increments once every second.
-            last_time = time(NULL);
+    while (true) {
 
-            // Initialize a Heartbeat message
-            uavcan_node_Heartbeat_1_0 test_heartbeat = {
-                .uptime = test_uptimeSec,
-                .health = {uavcan_node_Health_1_0_NOMINAL},
-                .mode = {uavcan_node_Mode_1_0_OPERATIONAL}
-            };
+        // Run a trivial scheduler polling the loops that run the business logic.
+        CanardMicrosecond monotonic_time = getMonotonicMicroseconds();
+//    if (monotonic_time >= next_fast_iter_at) {
+//        next_fast_iter_at += fast_loop_period;
+//        handleFastLoop(&state, monotonic_time);
+//    }
+        if (monotonic_time >= next_1_hz_iter_at) {
+            next_1_hz_iter_at += MEGA;
+            handle1HzLoop(ins, txQueue, my_allocator, monotonic_time, started_at);
+        }
+//    if (monotonic_time >= next_01_hz_iter_at) {
+//        next_01_hz_iter_at += MEGA * 10;
+//        handle01HzLoop(&state, monotonic_time);
+//    }
 
-            // Print data from Heartbeat message before it's serialized.
-            system("clear");
-            printf("Preparing to send the following Heartbeat message: \n");
-            printf("Uptime: %d\n", test_uptimeSec);
-            printf("Health: %d\n", uavcan_node_Health_1_0_NOMINAL);
-            printf("Mode: %d\n", uavcan_node_Mode_1_0_OPERATIONAL);
-
-            // Serialize the data using the included serialize function from the Heartbeat C header.
-            int8_t result1 = uavcan_node_Heartbeat_1_0_serialize_(&test_heartbeat, hbeat_ser_buf, &hbeat_ser_buf_size);
-
-            // Make sure the serialization was successful.
-            if (result1 < 0) {
-                printf("Serializing message failed. Aborting...\n");
-                break;
+        // Manage CAN RX/TX per redundant interface.
+        for (uint8_t ifidx = 0; ifidx < CAN_REDUNDANCY_FACTOR; ifidx++) {
+            // Transmit pending frames from the prioritized TX queues managed by libcanard.
+            CanardTxQueue *const que = &txQueue;
+            const CanardTxQueueItem *tqi = canardTxPeek(que);  // Find the highest-priority frame.
+            while (tqi != nullptr) {
+                // Attempt transmission only if the frame is not yet timed out while waiting in the TX queue.
+                // Otherwise just drop it and move on to the next one.
+                if ((tqi->tx_deadline_usec == 0) || (tqi->tx_deadline_usec > monotonic_time)) {
+                    // Send fame non-blocking.
+                    const int16_t result = transceiver.SendCanardFrame(tqi->frame, 0);
+                    if (result == 0) {
+                        break;  // The queue is full, we will try again on the next iteration.
+                    }
+                    if (result < 0) {
+                        return -result;  // SocketCAN interface failure (link down?)
+                    }
+                }
+                ins.memory_free(&ins, canardTxPop(que, tqi));
+                tqi = canardTxPeek(que);
             }
 
-            // Create a CanardTransfer and give it the required data.
-            CanardTransferMetadata transfer = {
-                .priority = CanardPriorityNominal,
-                .transfer_kind = CanardTransferKindMessage,
-                .port_id = uavcan_node_Heartbeat_1_0_FIXED_PORT_ID_,
-                .remote_node_id = CANARD_NODE_ID_UNSET,
-                .transfer_id = my_message_transfer_id,
-            };
-
-            // Increment our uptime and transfer ID.
-            ++test_uptimeSec;
-            ++my_message_transfer_id;
-
-            // Stop the loop once we hit 30s of transfer.
-            if (test_uptimeSec > UPTIME_SEC_MAX) {
-                printf("Reached 30s uptime! Exiting...\n");
+            // Process received frames by feeding them from SocketCAN to libcanard.
+            // The order in which we handle the redundant interfaces doesn't matter -- libcanard can accept incoming
+            // frames from any of the redundant interface in an arbitrary order.
+            // The internal state machine will sort them out and remove duplicates automatically.
+            CanardFrame frame = {0};
+            uint8_t buf[CANARD_MTU_CAN_FD] = {0};
+            const int16_t socketcan_result = socketcanPop(3, &frame, NULL, sizeof(buf), buf, 0, NULL);
+            if (socketcan_result == 0)  // The read operation has timed out with no frames, nothing to do here.
+            {
                 break;
             }
-
-            // Push our CanardTransfer to the Libcanard instance's transfer stack.
-            int32_t result2 =
-                canardTxPush(&txQueue, &ins, time(NULL) + 1, &transfer, hbeat_ser_buf_size, hbeat_ser_buf);
-
-            // Make sure our push onto the stack was successful.
-            if (result2 < 0) {
-                printf("Pushing onto TX stack failed. Aborting...\n");
-                break;
+            if (socketcan_result < 0)  // The read operation has failed. This is not a normal condition.
+            {
+                return -socketcan_result;
+            }
+            // The SocketCAN adapter uses the wall clock for timestamping, but we need monotonic.
+            // Wall clock can only be used for time synchronization.
+            const CanardMicrosecond timestamp_usec = getMonotonicMicroseconds();
+            CanardRxTransfer transfer = {static_cast<CanardPriority>(0)};
+            const int8_t canard_result = canardRxAccept(&ins, timestamp_usec, &frame, ifidx, &transfer, NULL);
+            if (canard_result > 0) {
+                processReceivedTransfer(&txQueue, &ins, &transceiver, &transfer);
+                ins.memory_free(&ins, (void *) transfer.payload);
+            } else if ((canard_result == 0) || (canard_result == -CANARD_ERROR_OUT_OF_MEMORY)) {
+                (void) 0;  // The frame did not complete a transfer so there is nothing to do.
+                // OOM should never occur if the heap is sized correctly. You can track OOM errors via heap API.
+            } else {
+                assert(false);  // No other error can possibly occur at runtime.
             }
         }
 
         // Run every 5ms to prevent using too much CPU.
         usleep(TX_PROC_SLEEP_TIME);
 
-        // Loop through all of the frames in the transfer stack.
-        for (const CanardTxQueueItem *txf = nullptr; (txf = canardTxPeek(&txQueue)) != nullptr;) {
-            // Make sure we aren't sending a message before the actual time.
-            if (txf->tx_deadline_usec < (unsigned long) time(NULL)) {
-                // Instantiate a SocketCAN CAN frame.
-                const int16_t result = transceiver.SendCanardFrame(txf->frame, 0);
-                if (result == 0) {
-                    break;  // The queue is full, we will try again on the next iteration.
-                }
-                if (result < 0) {
-                    return -result;  // SocketCAN interface failure (link down?)
-                }
-
-                // Pop the sent data off the stack and free its memory.
-                ins.memory_free(&ins, canardTxPop(&txQueue, txf));
-            }
-        }
-
-//        // Process received frames by feeding them from SocketCAN to libcanard.
-//        // The order in which we handle the redundant interfaces doesn't matter -- libcanard can accept incoming
-//        // frames from any of the redundant interface in an arbitrary order.
-//        // The internal state machine will sort them out and remove duplicates automatically.
-//        CanardFrame frame = transceiver.ReceiveCanardFrame(0);
-//        uint8_t buf[CANARD_MTU_CAN_FD] = {0};
-//
-//        // The SocketCAN adapter uses the wall clock for timestamping, but we need monotonic.
-//        // Wall clock can only be used for time synchronization.
-//        const CanardMicrosecond timestamp_usec = getMonotonicMicroseconds();
-//        CanardRxTransfer transfer = {static_cast<CanardPriority>(0)};
-//        const int8_t canard_result = canardRxAccept(&ins, timestamp_usec, &frame, 0, &transfer, NULL);
-//        if (canard_result > 0) {
-//            processReceivedTransfer(&txQueue, &ins, &transceiver, &transfer);
-//            ins.memory_free(&ins, (void *) transfer.payload);
-//        } else if ((canard_result == 0) || (canard_result == -CANARD_ERROR_OUT_OF_MEMORY)) {
-//            (void) 0;  // The frame did not complete a transfer so there is nothing to do.
-//            // OOM should never occur if the heap is sized correctly. You can track OOM errors via heap API.
-//        } else {
-//            assert(false);  // No other error can possibly occur at runtime.
-//        }
-
-        // Process received frames by feeding them from SocketCAN to libcanard.
-        // The order in which we handle the redundant interfaces doesn't matter -- libcanard can accept incoming
-        // frames from any of the redundant interface in an arbitrary order.
-        // The internal state machine will sort them out and remove duplicates automatically.
-        CanardFrame frame = {0};
-        uint8_t buf[CANARD_MTU_CAN_FD] = {0};
-        const int16_t socketcan_result = socketcanPop(3, &frame, NULL, sizeof(buf), buf, 0, NULL);
-        if (socketcan_result == 0)  // The read operation has timed out with no frames, nothing to do here.
-        {
-
-        }
-        if (socketcan_result < 0)  // The read operation has failed. This is not a normal condition.
-        {
-            return -socketcan_result;
-        }
-        // The SocketCAN adapter uses the wall clock for timestamping, but we need monotonic.
-        // Wall clock can only be used for time synchronization.
-        const CanardMicrosecond timestamp_usec = getMonotonicMicroseconds();
-        CanardRxTransfer transfer = {static_cast<CanardPriority>(0)};
-        const int8_t canard_result = canardRxAccept(&ins, timestamp_usec, &frame, 0, &transfer, NULL);
-        if (canard_result > 0) {
-            processReceivedTransfer(&txQueue, &ins, &transceiver, &transfer);
-            ins.memory_free(&ins, (void *) transfer.payload);
-        } else if ((canard_result == 0) || (canard_result == -CANARD_ERROR_OUT_OF_MEMORY)) {
-            (void) 0;  // The frame did not complete a transfer so there is nothing to do.
-            // OOM should never occur if the heap is sized correctly. You can track OOM errors via heap API.
-        } else {
-            assert(false);  // No other error can possibly occur at runtime.
-        }
     }
 }
 
