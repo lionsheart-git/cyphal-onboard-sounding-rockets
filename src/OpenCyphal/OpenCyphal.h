@@ -33,7 +33,7 @@ class OpenCyphal {
                     const size_t payload_size,
                     const void *const payload);
 
-    void addTransceiver(CanardTransceiver const &transceiver);
+    void addTransceiver(CanardTransceiver &transceiver);
 
   private:
     // Canard variables

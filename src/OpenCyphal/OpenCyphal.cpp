@@ -47,3 +47,12 @@ int32_t OpenCyphal::Publish(CanardMicrosecond const tx_deadline_usec,
 
     return retval;
 }
+
+void OpenCyphal::addTransceiver(CanardTransceiver &transceiver) {
+    for (uint8_t ifidx = 0; ifidx < CAN_REDUNDANCY_FACTOR; ifidx++) {
+        if (transceiver_[ifidx] == nullptr) {
+            transceiver_[ifidx] = &transceiver;
+            tx_queues_[ifidx] = canardTxInit(100, CANARD_MTU_CAN_FD);
+        }
+    }
+}
