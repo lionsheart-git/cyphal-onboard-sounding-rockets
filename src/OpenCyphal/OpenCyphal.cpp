@@ -37,15 +37,23 @@ int32_t OpenCyphal::Publish(CanardMicrosecond const tx_deadline_usec,
     //@todo Figure out how to deal with the failing of a push to one tx queue.
     int32_t retval = 0;
     for (uint8_t ifidx = 0; ifidx < CAN_REDUNDANCY_FACTOR; ifidx++) {
-        retval = canardTxPush(&tx_queues_[ifidx],
-                            &instance_,
-                            tx_deadline_usec,
-                            metadata,
-                            payload_size,
-                            payload);
+        retval = Publish(tx_deadline_usec, metadata, payload_size, payload);
     }
 
     return retval;
+}
+
+int32_t OpenCyphal::Publish(CanardMicrosecond const tx_deadline_usec,
+                            CanardTransferMetadata const *const metadata,
+                            size_t const payload_size,
+                            void const *const payload,
+                            uint8_t interface_index) {
+    return canardTxPush(&tx_queues_[interface_index],
+                        &instance_,
+                        tx_deadline_usec,
+                        metadata,
+                        payload_size,
+                        payload);;
 }
 
 void OpenCyphal::addTransceiver(CanardTransceiver &transceiver) {

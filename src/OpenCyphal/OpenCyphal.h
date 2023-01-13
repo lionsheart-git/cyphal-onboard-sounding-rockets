@@ -33,6 +33,12 @@ class OpenCyphal {
                     const size_t payload_size,
                     const void *const payload);
 
+    int32_t Publish(const CanardMicrosecond tx_deadline_usec,
+                    const CanardTransferMetadata *const metadata,
+                    const size_t payload_size,
+                    const void *const payload,
+                    uint8_t interface_index);
+
     void addTransceiver(CanardTransceiver &transceiver);
 
   private:
