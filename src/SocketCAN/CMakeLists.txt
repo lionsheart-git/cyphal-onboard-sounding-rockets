@@ -4,4 +4,4 @@ add_library(SocketCAN
 
 target_include_directories(SocketCAN PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(SocketCAN Canard)
+target_link_libraries(SocketCAN Canard OpenCyphal)
