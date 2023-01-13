@@ -17,6 +17,8 @@
 
 class OpenCyphal {
   public:
+    OpenCyphal(CanardTransceiver const &transceiver);
+
     int8_t Subscribe(const CanardTransferKind transfer_kind,
                      CanardPortID const port_id,
                      size_t const extent,
