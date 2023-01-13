@@ -17,7 +17,18 @@
 
 class OpenCyphal {
   public:
+    int8_t Subscribe(const CanardTransferKind transfer_kind,
+                     CanardPortID const port_id,
+                     size_t const extent,
+                     CanardMicrosecond const transfer_id_timeout_usec,
+                     CanardRxSubscription *out_subscription);
 
+    int32_t Publish(const CanardMicrosecond tx_deadline_usec,
+                    const CanardTransferMetadata *const metadata,
+                    const size_t payload_size,
+                    const void *const payload);
+
+    void addTransceiver(CanardTransceiver const &transceiver);
 
   private:
     // Canard variables
@@ -28,7 +39,6 @@ class OpenCyphal {
     // O1Heap variables
     O1HeapInstance *o1heap_allocator_;
     alignas(O1HEAP_ALIGNMENT) uint8_t heap_arena[O1HEAP_MEM_SIZE] = {0};
-
 
 };
 
