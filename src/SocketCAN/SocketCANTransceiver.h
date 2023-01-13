@@ -20,18 +20,19 @@
 #include <linux/can/raw.h>
 
 #include "socketcan.h"
+#include "CanardTransceiver.h"
 
-class SocketCANTransceiver {
+class SocketCANTransceiver : CanardTransceiver {
   public:
     explicit SocketCANTransceiver(std::string ifrName, bool can_fd);
     ~SocketCANTransceiver();
 
-    int16_t SendCanardFrame(CanardFrame const &frame, uint64_t const &timeout_usec) const;
+    int16_t SendCanardFrame(CanardFrame const &frame, uint64_t const &timeout_usec) const override;
     int16_t ReceiveCanardFrame(uint64_t const &timeout_usec,
                                uint64_t &out_timestamp_usec,
                                CanardFrame &out_frame,
-                               uint8_t buf[]) const;
-    void CanardFilter(size_t const num_configs, CanardFilter const &configs) const;
+                               uint8_t buf[]) const override;
+    int16_t CanardFilter(size_t const num_configs, struct CanardFilter const &configs) const override;
 
     bool Send(uint32_t canid, std::vector<uint8_t> data);
     uint8_t Receive();
