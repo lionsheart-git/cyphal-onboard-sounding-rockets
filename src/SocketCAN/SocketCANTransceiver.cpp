@@ -68,6 +68,6 @@ int16_t SocketCANTransceiver::ReceiveCanardFrame(uint64_t const &timeout_usec,
 
 }
 
-void SocketCANTransceiver::CanardFilter(size_t const num_configs, struct CanardFilter const &configs) const {
-    socketcanFilter(socket_, num_configs, &configs);
+int16_t SocketCANTransceiver::CanardFilter(size_t const num_configs, struct CanardFilter const &configs) const {
+    return socketcanFilter(socket_, num_configs, &configs);
 }
