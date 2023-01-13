@@ -22,7 +22,7 @@
 #include "socketcan.h"
 #include "CanardTransceiver.h"
 
-class SocketCANTransceiver : CanardTransceiver {
+class SocketCANTransceiver : public CanardTransceiver {
   public:
     explicit SocketCANTransceiver(std::string ifrName, bool can_fd);
     ~SocketCANTransceiver();
