@@ -257,12 +257,7 @@ static void handle1HzLoop(CanardInstance &canard,
         uavcan_node_Heartbeat_1_0 heartbeat = {0};
         heartbeat.uptime = (uint32_t) ((monotonic_time - started_at) / MEGA);
         heartbeat.mode.value = uavcan_node_Mode_1_0_OPERATIONAL;
-        const O1HeapDiagnostics heap_diag = o1heapGetDiagnostics(heap);
-        if (heap_diag.oom_count > 0) {
-            heartbeat.health.value = uavcan_node_Health_1_0_CAUTION;
-        } else {
-            heartbeat.health.value = uavcan_node_Health_1_0_NOMINAL;
-        }
+        heartbeat.health.value = cyphal.Health();
 
         uint8_t serialized[uavcan_node_Heartbeat_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_] = {0};
         size_t serialized_size = sizeof(serialized);

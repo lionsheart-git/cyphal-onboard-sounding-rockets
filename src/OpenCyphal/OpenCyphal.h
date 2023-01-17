@@ -47,6 +47,15 @@ class OpenCyphal {
                     const void *const payload,
                     uint8_t interface_index);
 
+    /**
+     * @brief Returns the health of the current OpenCyphal instance.
+     *
+     * Currently given by the healt of the O1Heap stack.
+     *
+     * @return uavcan_node_Health_1_0 health value.
+     */
+    uint8_t Health();
+
     void addTransceiver(CanardTransceiver &transceiver);
 
     int32_t HandleTxRxQueues();

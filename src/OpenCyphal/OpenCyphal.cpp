@@ -5,6 +5,7 @@
 */
 
 #include "OpenCyphal.h"
+#include "uavcan/node/Health_1_0.h"
 
 OpenCyphal::OpenCyphal(CanardTransceiver &transceiver)
     : o1heap_allocator_(),
@@ -164,4 +165,13 @@ uavcan_node_GetInfo_Response_1_0 OpenCyphal::ProcessRequestNodeGetInfo() {
 
     // The software image CRC and the Certificate of Authenticity are optional so not populated in this demo.
     return resp;
+}
+
+uint8_t OpenCyphal::Health() {
+    const O1HeapDiagnostics heap_diag = o1heapGetDiagnostics(o1heap_allocator_);
+        if (heap_diag.oom_count > 0) {
+            return uavcan_node_Health_1_0_CAUTION;
+        } else {
+            return uavcan_node_Health_1_0_NOMINAL;
+        }
 }
