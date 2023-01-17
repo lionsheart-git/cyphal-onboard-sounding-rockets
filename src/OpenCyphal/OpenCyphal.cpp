@@ -25,8 +25,8 @@ int8_t OpenCyphal::Subscribe(CanardTransferKind const transfer_kind,
     return canardRxSubscribe(&instance_,
                              transfer_kind,
                              port_id,
+                             extent,
                              transfer_id_timeout_usec,
-                             CANARD_DEFAULT_TRANSFER_ID_TIMEOUT_USEC,
                              out_subscription);
 }
 
