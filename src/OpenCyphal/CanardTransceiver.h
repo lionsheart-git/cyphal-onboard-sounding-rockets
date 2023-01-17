@@ -48,6 +48,7 @@ class CanardTransceiver {
     virtual int16_t ReceiveCanardFrame(uint64_t const &timeout_usec,
                                        uint64_t &out_timestamp_usec,
                                        CanardFrame &out_frame,
+                                       size_t buf_size,
                                        uint8_t buf[]) const = 0;
 
     /**

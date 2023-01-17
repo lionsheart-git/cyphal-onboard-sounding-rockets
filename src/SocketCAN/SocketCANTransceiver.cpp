@@ -62,8 +62,9 @@ int16_t SocketCANTransceiver::SendCanardFrame(CanardFrame const &frame, uint64_t
 int16_t SocketCANTransceiver::ReceiveCanardFrame(uint64_t const &timeout_usec,
                                                  uint64_t &out_timestamp_usec,
                                                  CanardFrame &out_frame,
+                                                 size_t buf_size,
                                                  uint8_t buf[]) const {
-    return socketcanPop(socket_, &out_frame, &out_timestamp_usec, sizeof(uint8_t) * CANARD_MTU_CAN_FD, buf, timeout_usec,
+    return socketcanPop(socket_, &out_frame, &out_timestamp_usec, buf_size, buf, timeout_usec,
                         nullptr);
 
 }

@@ -100,7 +100,7 @@ int32_t OpenCyphal::HandleTxRxQueues() {
         CanardFrame frame = {0};
         uint8_t buf[CANARD_MTU_CAN_FD] = {0};
         uint64_t out_timestamp_usec;
-        int16_t socketcan_result = transceiver_[ifidx]->ReceiveCanardFrame(0, out_timestamp_usec, frame, buf);
+        int16_t socketcan_result = transceiver_[ifidx]->ReceiveCanardFrame(0, out_timestamp_usec, frame, sizeof(buf), buf);
         if (socketcan_result == 0)  // The read operation has timed out with no frames, nothing to do here.
         {
             break;
