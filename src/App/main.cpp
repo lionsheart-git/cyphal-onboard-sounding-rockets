@@ -1,22 +1,13 @@
 #include <iostream>
 
-#include <cstdio>
 #include <cstring>
 #include <unistd.h>
-
-#include <net/if.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-
-#include <linux/can.h>
-#include <linux/can/raw.h>
 
 #include "SocketCANTransceiver.h"
 #include "OpenCyphal.h"
 #include "Node.h"
 #include "Clock.h"
 
-#include "o1heap.h"
 #include "uavcan/node/Heartbeat_1_0.h"
 #include "uavcan/node/GetInfo_1_0.h"
 #include "uavcan/_register/Value_1_0.h"
