@@ -17,14 +17,16 @@
 #include <cassert>
 #include <ctime>
 #include <cstdlib>
+#include <vector>
 
 #include <canard.h>
 #include <o1heap.h>
 
 #include "uavcan/node/GetInfo_1_0.h"
+#include "uavcan/_register/Value_1_0.h"
 
 #include "CanardTransceiver.h"
-#include "uavcan/_register/Value_1_0.h"
+#include "CanardTransferReceiver.h"
 
 class OpenCyphal {
   public:
@@ -96,6 +98,8 @@ class OpenCyphal {
      */
     void addTransceiver(CanardTransceiver &transceiver);
 
+    void addTransferReceiver(CanardTransferReceiver &transfer_receiver);
+
     /**
      * @brief Handles the transmission and receive queues.
      *
@@ -114,20 +118,7 @@ class OpenCyphal {
     O1HeapInstance *o1heap_allocator_; /**< O1Heap instance for cyphal to allocate memory */
     alignas(O1HEAP_ALIGNMENT) uint8_t heap_arena[O1HEAP_MEM_SIZE] = {0}; /**< Memory space for O1Heap toa allocate in */
 
-    /**
-     * @brief Processes the received transfers.
-     *
-     * @param interface_index Interface index the transfer came from.
-     * @param transfer Transfer to process.
-     */
-    void ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const & transfer);
-
-    /**
-     * @brief Processes the gotten GetInfo request.
-     *
-     * @return Populated GetInfo request.
-     */
-    static uavcan_node_GetInfo_Response_1_0 ProcessRequestNodeGetInfo();
+    std::vector<CanardTransferReceiver *> transfer_receiver_;
 
     /**
      * @brief Standard memAllocate from O1Heap examples.

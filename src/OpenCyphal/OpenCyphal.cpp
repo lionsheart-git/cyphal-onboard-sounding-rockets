@@ -9,7 +9,7 @@
 
 OpenCyphal::OpenCyphal(CanardTransceiver &transceiver)
     : o1heap_allocator_(),
-    instance_(canardInit(&memAllocate, &memFree)) {
+    instance_(canardInit(&memAllocate, &memFree)), transfer_receiver_() {
 
     o1heap_allocator_ = o1heapInit(heap_arena, sizeof(heap_arena));
 
@@ -115,7 +115,9 @@ int32_t OpenCyphal::HandleTxRxQueues() {
         CanardRxTransfer transfer = {static_cast<CanardPriority>(0)};
         const int8_t canard_result = canardRxAccept(&instance_, timestamp_usec, &frame, ifidx, &transfer, NULL);
         if (canard_result > 0) {
-            ProcessReceivedTransfer(ifidx, transfer);
+            for (CanardTransferReceiver *receiver : transfer_receiver_) {
+                receiver->ProcessReceivedTransfer(ifidx, transfer);
+            }
             instance_.memory_free(&instance_, (void *) transfer.payload);
         } else if ((canard_result == 0) || (canard_result == -CANARD_ERROR_OUT_OF_MEMORY)) {
             (void) 0;  // The frame did not complete a transfer so there is nothing to do.
@@ -124,47 +126,7 @@ int32_t OpenCyphal::HandleTxRxQueues() {
             assert(false);  // No other error can possibly occur at runtime.
         }
     }
-}
-
-void OpenCyphal::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) {
-    if (transfer.metadata.transfer_kind == CanardTransferKindRequest) {
-        if (transfer.metadata.port_id == uavcan_node_GetInfo_1_0_FIXED_PORT_ID_) {
-            // The request object is empty so we don't bother deserializing it. Just send the response.
-            const uavcan_node_GetInfo_Response_1_0 resp = ProcessRequestNodeGetInfo();
-            uint8_t serialized[uavcan_node_GetInfo_Response_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_] = {0};
-            size_t serialized_size = sizeof(serialized);
-            const int8_t res = uavcan_node_GetInfo_Response_1_0_serialize_(&resp, &serialized[0], &serialized_size);
-            if (res >= 0) {
-                CanardTransferMetadata meta = transfer.metadata;
-                meta.transfer_kind = CanardTransferKindResponse;
-                Publish(transfer.timestamp_usec + MEGA, &meta, serialized_size, serialized, interface_index);
-            } else {
-                assert(false);
-            }
-        }
-    }
-}
-
-uavcan_node_GetInfo_Response_1_0 OpenCyphal::ProcessRequestNodeGetInfo() {
-    uavcan_node_GetInfo_Response_1_0 resp = {0};
-    resp.protocol_version.major = CANARD_CYPHAL_SPECIFICATION_VERSION_MAJOR;
-    resp.protocol_version.minor = CANARD_CYPHAL_SPECIFICATION_VERSION_MINOR;
-
-    // The hardware version is not populated in this demo because it runs on no specific hardware.
-    // An embedded node like a servo would usually determine the version by querying the hardware.
-
-    resp.software_version.major = VERSION_MAJOR;
-    resp.software_version.minor = VERSION_MINOR;
-    resp.software_vcs_revision_id = VCS_REVISION_ID;
-
-    getUniqueID(resp.unique_id);
-
-    // The node name is the name of the product like a reversed Internet domain name (or like a Java package).
-    resp.name.count = strlen(NODE_NAME);
-    memcpy(&resp.name.elements, NODE_NAME, resp.name.count);
-
-    // The software image CRC and the Certificate of Authenticity are optional so not populated in this demo.
-    return resp;
+    return 0;
 }
 
 uint8_t OpenCyphal::Health() {
@@ -174,4 +136,7 @@ uint8_t OpenCyphal::Health() {
         } else {
             return uavcan_node_Health_1_0_NOMINAL;
         }
+}
+void OpenCyphal::addTransferReceiver(CanardTransferReceiver &transfer_receiver) {
+    transfer_receiver_.push_back(&transfer_receiver);
 }
