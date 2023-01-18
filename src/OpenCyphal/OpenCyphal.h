@@ -30,17 +30,50 @@ class OpenCyphal {
   public:
     explicit OpenCyphal(CanardTransceiver &transceiver);
 
+    /**
+     * @brief Subscribes to a specific topic.
+     *
+     * @param transfer_kind Type of transfer.
+     * @param port_id Port ID of topic or service.
+     * @param extent Maximum possible size of received objects of this type.
+     * @param transfer_id_timeout_usec Transfer-ID timeout value.
+     * @param out_subscription Pointer to subscription.
+     *
+     * @return
+     */
     int8_t Subscribe(const CanardTransferKind transfer_kind,
                      CanardPortID const port_id,
                      size_t const extent,
                      CanardMicrosecond const transfer_id_timeout_usec,
                      CanardRxSubscription *out_subscription);
 
+    /**
+     * @brief Publishes the message to all interfaces.
+     *
+     * @param tx_deadline_usec Deadline to which the message has to be send.
+     * @param metadata Metadata of the message
+     * @param payload_size Payload size.
+     * @param[in] payload Pointer to payload.
+     * @param interface_index Index of interface in array.
+     *
+     * @return
+     */
     int32_t Publish(const CanardMicrosecond tx_deadline_usec,
                     const CanardTransferMetadata *const metadata,
                     const size_t payload_size,
                     const void *const payload);
 
+    /**
+     * @brief Publishes the message to the specified interface.
+     *
+     * @param tx_deadline_usec Deadline to which the message has to be send.
+     * @param metadata Metadata of the message
+     * @param payload_size Payload size.
+     * @param[in] payload Pointer to payload.
+     * @param interface_index Index of interface in array.
+     *
+     * @return
+     */
     int32_t Publish(const CanardMicrosecond tx_deadline_usec,
                     const CanardTransferMetadata *const metadata,
                     const size_t payload_size,
@@ -56,35 +89,80 @@ class OpenCyphal {
      */
     uint8_t Health();
 
+    /**
+     * @brief Adds a transceiver to the OpenCyphal instance. A maximum of three transceivers are supported.
+     *
+     * @param transceiver The transceiver to add.
+     */
     void addTransceiver(CanardTransceiver &transceiver);
 
+    /**
+     * @brief Handles the transmission and receive queues.
+     *
+     * This function has to be called continuously to publish data and messages and answer to requests.
+     * @return Negative errno on error.
+     */
     int32_t HandleTxRxQueues();
 
   private:
     // Canard variables
-    CanardTxQueue tx_queues_[CAN_REDUNDANCY_FACTOR];
-    CanardTransceiver *transceiver_[CAN_REDUNDANCY_FACTOR];
-    CanardInstance instance_;
+    CanardTxQueue tx_queues_[CAN_REDUNDANCY_FACTOR]; /**< Transmission queue for each receiver */
+    CanardTransceiver *transceiver_[CAN_REDUNDANCY_FACTOR]; /**< Transceiver of this canard instance */
+    CanardInstance instance_; /**< Canard instance */
 
     // O1Heap variables
-    O1HeapInstance *o1heap_allocator_;
-    alignas(O1HEAP_ALIGNMENT) uint8_t heap_arena[O1HEAP_MEM_SIZE] = {0};
+    O1HeapInstance *o1heap_allocator_; /**< O1Heap instance for cyphal to allocate memory */
+    alignas(O1HEAP_ALIGNMENT) uint8_t heap_arena[O1HEAP_MEM_SIZE] = {0}; /**< Memory space for O1Heap toa allocate in */
 
+    /**
+     * @brief Processes the received transfers.
+     *
+     * @param interface_index Interface index the transfer came from.
+     * @param transfer Transfer to process.
+     */
     void ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const & transfer);
+
+    /**
+     * @brief Processes the gotten GetInfo request.
+     *
+     * @return Populated GetInfo request.
+     */
     static uavcan_node_GetInfo_Response_1_0 ProcessRequestNodeGetInfo();
 
-    /* Standard memAllocate and memFree from o1heap examples. */
+    /**
+     * @brief Standard memAllocate from O1Heap examples.
+     *
+     * Needed by canard.
+     *
+     * @param ins Canard instance.
+     * @param amount Amount to allocate.
+     * @return Pointer to the allocated memory or NULL.
+     */
     static void *memAllocate(CanardInstance *const ins, const size_t amount) {
         O1HeapInstance *const heap = (O1HeapInstance *) ins->user_reference;
         assert(o1heapDoInvariantsHold(heap));
         return o1heapAllocate(heap, amount);
     }
 
+    /**
+     * @brief Standard memFree from O1Heap examples.
+     *
+     * Needed by canard.
+     *
+     * @param ins Canard instance.
+     * @param pointer Pointer to memory to free.
+     */
     static void memFree(CanardInstance *const ins, void *const pointer) {
         O1HeapInstance *const heap = (O1HeapInstance *) ins->user_reference;
         o1heapFree(heap, pointer);
     }
 
+    /// A deeply embedded system should sample a microsecond-resolution non-overflowing 64-bit timer.
+    /// Here is a simple non-blocking implementation as an example:
+    /// https://github.com/PX4/sapog/blob/601f4580b71c3c4da65cc52237e62a/firmware/src/motor/realtime/motor_timer.c#L233-L274
+    /// Mind the difference between monotonic time and wall time. Monotonic time never changes rate or makes leaps,
+    /// it is therefore impossible to synchronize with an external reference. Wall time can be synchronized and therefore
+    /// it may change rate or make leap adjustments. The two kinds of time serve completely different purposes.
     static CanardMicrosecond getMonotonicMicroseconds() {
         struct timespec ts{};
         if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
