@@ -13,7 +13,7 @@
 
 #include "SocketCANTransceiver.h"
 #include "OpenCyphal.h"
-#include <vector>
+#include "Node.h"
 
 #include "o1heap.h"
 #include "uavcan/node/Heartbeat_1_0.h"
@@ -38,11 +38,42 @@ static CanardMicrosecond getMonotonicMicroseconds();
 static void handle1HzLoop(OpenCyphal &cyphal, const CanardMicrosecond monotonic_time,
                           CanardMicrosecond const started_at);
 
+// Returns the 128-bit unique-ID of the local node. This value is used in uavcan.node.GetInfo.Response and during the
+// plug-and-play node-ID allocation by uavcan.pnp.NodeIDAllocationData. The function is infallible.
+static void getUniqueID(uint8_t out[uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_]) {
+    // A real hardware node would read its unique-ID from some hardware-specific source (typically stored in ROM).
+    // This example is a software-only node, so we store the unique-ID in a (read-only) register instead.
+    uavcan_register_Value_1_0 value = {0};
+    uavcan_register_Value_1_0_select_unstructured_(&value);
+    // Populate the default; it is only used at the first run if there is no such register.
+    for (uint8_t i = 0; i < uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_; i++) {
+        value.unstructured.value.elements[value.unstructured.value.count++] = (uint8_t) rand();  // NOLINT
+    }
+    // registerRead("uavcan.node.unique_id", &value);
+    assert(uavcan_register_Value_1_0_is_unstructured_(&value) &&
+        value.unstructured.value.count == uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_);
+    memcpy(&out[0], &value.unstructured.value, uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_);
+}
+
 int main() {
     // Init SocketCanTransceiver
     SocketCANTransceiver transceiver("vcan0", true);
 
     OpenCyphal cyphal(transceiver);
+
+    uavcan_node_GetInfo_Response_1_0 node_info;
+    node_info.name.count = strlen(NODE_NAME);
+    memcpy(&node_info.name.elements, NODE_NAME, node_info.name.count);
+
+    node_info.software_version.major = VERSION_MAJOR;
+    node_info.software_version.minor = VERSION_MINOR;
+    node_info.software_vcs_revision_id = VCS_REVISION_ID;
+
+    getUniqueID(node_info.unique_id);
+
+    Node node(cyphal, node_info);
+
+    cyphal.addTransferReceiver(node);
 
     // Subscribe to GetInfo requests
     static CanardRxSubscription rx;
