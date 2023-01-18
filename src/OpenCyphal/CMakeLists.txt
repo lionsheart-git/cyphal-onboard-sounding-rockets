@@ -1,4 +1,4 @@
-add_library(OpenCyphal OpenCyphal.cpp OpenCyphal.h CanardTransceiver.h Node.cpp Node.h CanardTransferReceiver.h)
+add_library(OpenCyphal OpenCyphal.cpp OpenCyphal.h CanardTransceiver.h Node.cpp Node.h CanardTransferReceiver.h Clock.cpp Clock.h)
 
 target_include_directories(OpenCyphal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
