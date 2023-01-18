@@ -148,20 +148,6 @@ class OpenCyphal {
         o1heapFree(heap, pointer);
     }
 
-    /// A deeply embedded system should sample a microsecond-resolution non-overflowing 64-bit timer.
-    /// Here is a simple non-blocking implementation as an example:
-    /// https://github.com/PX4/sapog/blob/601f4580b71c3c4da65cc52237e62a/firmware/src/motor/realtime/motor_timer.c#L233-L274
-    /// Mind the difference between monotonic time and wall time. Monotonic time never changes rate or makes leaps,
-    /// it is therefore impossible to synchronize with an external reference. Wall time can be synchronized and therefore
-    /// it may change rate or make leap adjustments. The two kinds of time serve completely different purposes.
-    static CanardMicrosecond getMonotonicMicroseconds() {
-        struct timespec ts{};
-        if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
-            abort();
-        }
-        return (uint64_t) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
-    }
-
     // Returns the 128-bit unique-ID of the local node. This value is used in uavcan.node.GetInfo.Response and during the
     // plug-and-play node-ID allocation by uavcan.pnp.NodeIDAllocationData. The function is infallible.
     static void getUniqueID(uint8_t out[uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_]) {

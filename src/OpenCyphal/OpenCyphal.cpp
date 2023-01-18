@@ -5,7 +5,10 @@
 */
 
 #include "OpenCyphal.h"
+
 #include "uavcan/node/Health_1_0.h"
+
+#include "Clock.h"
 
 OpenCyphal::OpenCyphal(CanardTransceiver &transceiver)
     : o1heap_allocator_(),
@@ -71,7 +74,7 @@ void OpenCyphal::addTransceiver(CanardTransceiver &transceiver) {
 
 int32_t OpenCyphal::HandleTxRxQueues() {
 
-    CanardMicrosecond monotonic_time = getMonotonicMicroseconds();
+    CanardMicrosecond monotonic_time = Clock::GetMonotonicMicroseconds();
     for (uint8_t ifidx = 0; ifidx < CAN_REDUNDANCY_FACTOR; ifidx++) {
         // Transmit pending frames from the prioritized TX queues managed by libcanard.
         CanardTxQueue *const que = &tx_queues_[ifidx];
@@ -111,7 +114,7 @@ int32_t OpenCyphal::HandleTxRxQueues() {
         }
         // The SocketCAN adapter uses the wall clock for timestamping, but we need monotonic.
         // Wall clock can only be used for time synchronization.
-        const CanardMicrosecond timestamp_usec = getMonotonicMicroseconds();
+        const CanardMicrosecond timestamp_usec = Clock::GetMonotonicMicroseconds();
         CanardRxTransfer transfer = {static_cast<CanardPriority>(0)};
         const int8_t canard_result = canardRxAccept(&instance_, timestamp_usec, &frame, ifidx, &transfer, NULL);
         if (canard_result > 0) {

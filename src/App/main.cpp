@@ -14,6 +14,7 @@
 #include "SocketCANTransceiver.h"
 #include "OpenCyphal.h"
 #include "Node.h"
+#include "Clock.h"
 
 #include "o1heap.h"
 #include "uavcan/node/Heartbeat_1_0.h"
@@ -33,8 +34,6 @@
 
 // Function prototypes
 static void getUniqueID(uint8_t out[uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_]);
-static uavcan_node_GetInfo_Response_1_0 processRequestNodeGetInfo();
-static CanardMicrosecond getMonotonicMicroseconds();
 static void handle1HzLoop(OpenCyphal &cyphal, const CanardMicrosecond monotonic_time,
                           CanardMicrosecond const started_at);
 
@@ -89,7 +88,7 @@ int main() {
     }
 
     // Now the node is initialized and we're ready to roll.
-    auto started_at = getMonotonicMicroseconds();
+    auto started_at = Clock::GetMonotonicMicroseconds();
 
     task_t task;
     task.intervall = MEGA;
@@ -101,7 +100,7 @@ int main() {
     while (true) {
 
         // Run a trivial scheduler polling the loops that run the business logic.
-        CanardMicrosecond monotonic_time = getMonotonicMicroseconds();
+        CanardMicrosecond monotonic_time = Clock::GetMonotonicMicroseconds();
 
         node.CheckScheduler(monotonic_time);
 
@@ -112,14 +111,6 @@ int main() {
         usleep(TX_PROC_SLEEP_TIME);
 
     }
-}
-
-static CanardMicrosecond getMonotonicMicroseconds() {
-    struct timespec ts;
-    if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
-        abort();
-    }
-    return (uint64_t) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
 }
 
 int node_heartbeat = 0;
