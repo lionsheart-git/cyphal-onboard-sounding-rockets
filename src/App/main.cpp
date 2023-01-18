@@ -90,20 +90,20 @@ int main() {
 
     // Now the node is initialized and we're ready to roll.
     auto started_at = getMonotonicMicroseconds();
-    const CanardMicrosecond fast_loop_period = MEGA / 50;
-    CanardMicrosecond next_fast_iter_at = started_at + fast_loop_period;
-    CanardMicrosecond next_1_hz_iter_at = started_at + MEGA;
-    CanardMicrosecond next_01_hz_iter_at = started_at + MEGA * 10;
+
+    task_t task;
+    task.intervall = MEGA;
+    task.task_function = &handle1HzLoop;
+    node.Schedule(task);
+
+    node.StartNode(started_at);
 
     while (true) {
 
         // Run a trivial scheduler polling the loops that run the business logic.
         CanardMicrosecond monotonic_time = getMonotonicMicroseconds();
 
-        if (monotonic_time >= next_1_hz_iter_at) {
-            next_1_hz_iter_at += MEGA;
-            handle1HzLoop(cyphal, monotonic_time, started_at);
-        }
+        node.CheckScheduler(monotonic_time);
 
         // Manage CAN RX/TX per redundant interface.
         cyphal.HandleTxRxQueues();

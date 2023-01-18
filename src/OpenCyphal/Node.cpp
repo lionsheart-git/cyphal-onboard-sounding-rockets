@@ -5,7 +5,11 @@
 */
 
 #include "Node.h"
-Node::Node(OpenCyphal &cyphal, uavcan_node_GetInfo_Response_1_0 info) : cyphal_(cyphal), info_(info) {
+
+#include "Clock.h"
+
+Node::Node(OpenCyphal &cyphal, uavcan_node_GetInfo_Response_1_0 info)
+    : cyphal_(cyphal), info_(info), started_at_() {
 }
 
 void Node::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) {
@@ -46,4 +50,24 @@ uavcan_node_GetInfo_Response_1_0 Node::ProcessRequestNodeGetInfo() {
 
     // The software image CRC and the Certificate of Authenticity are optional so not populated in this demo.
     return resp;
+}
+
+void Node::CheckScheduler(CanardMicrosecond monotonic_time) {
+    if (online_) {
+        for (task_t &task : schedule_) {
+            if (monotonic_time >= task.next_run) {
+                task.next_run = monotonic_time + task.intervall;
+                task.task_function(cyphal_, monotonic_time, started_at_);
+            }
+        }
+    }
+}
+
+void Node::Schedule(task_t const &task) {
+    schedule_.push_back(task);
+}
+
+void Node::StartNode(uint64_t started_at) {
+    started_at_ = started_at;
+    online_ = true;
 }
