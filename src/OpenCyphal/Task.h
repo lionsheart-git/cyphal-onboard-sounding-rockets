@@ -13,7 +13,9 @@
 
 class Task {
   public:
-    virtual uint64_t NextRun() = 0;
+    uint64_t NextRun() const;
+    void UpdateNextRun(uint64_t const &current_time);
+    virtual uint64_t Interval() const = 0;
     virtual void Execute(OpenCyphal & cyphal, uint64_t current_time) = 0;
 
   protected:
