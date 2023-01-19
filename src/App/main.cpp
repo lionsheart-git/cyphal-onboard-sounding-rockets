@@ -16,7 +16,7 @@
 
 // Defines
 #define O1HEAP_MEM_SIZE 4096
-#define NODE_ID 96
+#define NODE_ID 7
 #define UPTIME_SEC_MAX 31
 #define TX_PROC_SLEEP_TIME 5000
 
@@ -50,7 +50,7 @@ int main() {
     // Init SocketCanTransceiver
     SocketCANTransceiver transceiver("vcan0", true);
 
-    OpenCyphal cyphal(transceiver);
+    OpenCyphal cyphal(NODE_ID, transceiver);
 
     uavcan_node_GetInfo_Response_1_0 node_info;
     node_info.name.count = strlen(NODE_NAME);

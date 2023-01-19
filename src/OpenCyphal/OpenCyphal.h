@@ -30,7 +30,7 @@
 
 class OpenCyphal {
   public:
-    explicit OpenCyphal(CanardTransceiver &transceiver);
+    explicit OpenCyphal(uint8_t node_id, CanardTransceiver &transceiver);
 
     /**
      * @brief Subscribes to a specific topic.

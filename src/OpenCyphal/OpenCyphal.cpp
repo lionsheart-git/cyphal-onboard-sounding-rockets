@@ -10,14 +10,14 @@
 
 #include "Clock.h"
 
-OpenCyphal::OpenCyphal(CanardTransceiver &transceiver)
+OpenCyphal::OpenCyphal(uint8_t node_id, CanardTransceiver &transceiver)
     : o1heap_allocator_(),
     instance_(canardInit(&memAllocate, &memFree)), transfer_receiver_() {
 
     o1heap_allocator_ = o1heapInit(heap_arena, sizeof(heap_arena));
 
     instance_.user_reference = o1heap_allocator_;
-    instance_.node_id = NODE_ID;
+    instance_.node_id = node_id;
 
     transceiver_[0] = &transceiver;
     tx_queues_[0] = canardTxInit(100, CANARD_MTU_CAN_FD);
