@@ -14,7 +14,7 @@ class THeartbeat : public Task {
   public:
     THeartbeat(uint64_t started_at, int64_t interval);
 
-    uint64_t NextRun() override;
+    uint64_t Interval() const override;
     void Execute(OpenCyphal & cyphal, uint64_t current_time) override;
 
   private:

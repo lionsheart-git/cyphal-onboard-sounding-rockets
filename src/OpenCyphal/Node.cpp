@@ -56,6 +56,7 @@ void Node::CheckScheduler(CanardMicrosecond monotonic_time) {
     if (online_) {
         for (Task *task : schedule_) {
             if (monotonic_time >= task->NextRun()) {
+                task->UpdateNextRun(monotonic_time);
                 task->Execute(cyphal_, monotonic_time);
             }
         }
