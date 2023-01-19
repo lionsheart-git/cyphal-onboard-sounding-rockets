@@ -21,6 +21,11 @@
  */
 class Node : public CanardTransferReceiver {
 
+    /**
+     * @todo Currently a new cyphal class has to be created for every node with a different id and then handed to the
+     * Node class. This leaves room for user error by handing over the same class to different nodes. This should be
+     * mitigated by moving the cyphal instantiation inside the Node class.
+     */
   public:
     Node(OpenCyphal & cyphal, uavcan_node_GetInfo_Response_1_0 info);
 
