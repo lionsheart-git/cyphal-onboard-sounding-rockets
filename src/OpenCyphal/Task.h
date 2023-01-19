@@ -46,7 +46,7 @@ class Task {
      */
     virtual void Execute(OpenCyphal & cyphal, uint64_t current_time) = 0;
 
-  protected:
+  private:
     uint64_t next_run_; /**< Time the task has to be run again */
 };
 
