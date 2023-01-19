@@ -10,16 +10,37 @@
 #include "Task.h"
 #include "PMessageHeartbeat.h"
 
+/**
+ * @brief Task sending a heartbeat.
+ *
+ * The cyphal specification expects every node to send a heartbeat at least once per second. So the minimal interval
+ * should be MEGA. However this is not checked.
+ */
 class THeartbeat : public Task {
+
   public:
+    /**
+     * @brief Creates a new heartbeat task.
+     *
+     * @param started_at The instant the task is created.
+     * @param interval The interval the task should be run at.
+     */
     THeartbeat(uint64_t started_at, int64_t interval);
 
+    /**
+     * @copydoc Task::Interval()
+     */
     uint64_t Interval() const override;
+
+    /**
+     * @copydoc Task::Execute()
+     * Publishes the heartbeat.
+     */
     void Execute(OpenCyphal & cyphal, uint64_t current_time) override;
 
   private:
-    PMessageHeartbeat heartbeat_;
-    int64_t interval_;
+    PMessageHeartbeat heartbeat_; /**< Heartbeat message to be published. */
+    int64_t interval_; /**< Interval to publish at. */
 
 };
 
