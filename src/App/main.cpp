@@ -7,6 +7,8 @@
 #include "OpenCyphal.h"
 #include "Node.h"
 #include "Clock.h"
+#include "PMessageHeartbeat.h"
+#include "THeartbeat.h"
 
 #include "uavcan/node/Heartbeat_1_0.h"
 #include "uavcan/node/GetInfo_1_0.h"
@@ -81,10 +83,9 @@ int main() {
     // Now the node is initialized and we're ready to roll.
     auto started_at = Clock::GetMonotonicMicroseconds();
 
-    task_t task;
-    task.intervall = MEGA;
-    task.task_function = &handle1HzLoop;
-    node.Schedule(task);
+    THeartbeat heartbeat(started_at, MEGA);
+
+    node.Schedule(heartbeat);
 
     node.StartNode(started_at);
 
@@ -122,20 +123,20 @@ static void handle1HzLoop(OpenCyphal &cyphal, const CanardMicrosecond monotonic_
         size_t serialized_size = sizeof(serialized);
         const int8_t err = uavcan_node_Heartbeat_1_0_serialize_(&heartbeat, &serialized[0], &serialized_size);
         assert(err >= 0);
-        if (err >= 0) {
-            const CanardTransferMetadata transfer = {
-                .priority       = CanardPriorityNominal,
-                .transfer_kind  = CanardTransferKindMessage,
-                .port_id        = uavcan_node_Heartbeat_1_0_FIXED_PORT_ID_,
-                .remote_node_id = CANARD_NODE_ID_UNSET,
-                .transfer_id    = (CanardTransferID) (node_heartbeat++),
-            };
-            cyphal.Publish(
-                 monotonic_time + MEGA,  // Set transmission deadline 1 second, optimal for heartbeat.
-                 &transfer,
-                 serialized_size,
-                 &serialized[0]);
-        }
+
+        const CanardTransferMetadata transfer = {
+            .priority       = CanardPriorityNominal,
+            .transfer_kind  = CanardTransferKindMessage,
+            .port_id        = uavcan_node_Heartbeat_1_0_FIXED_PORT_ID_,
+            .remote_node_id = CANARD_NODE_ID_UNSET,
+            .transfer_id    = (CanardTransferID) (node_heartbeat++),
+        };
+        cyphal.Publish(
+             monotonic_time + MEGA,  // Set transmission deadline 1 second, optimal for heartbeat.
+             &transfer,
+             serialized_size,
+             &serialized[0]);
+
     } else  // If we don't have a node-ID, obtain one by publishing allocation request messages until we get a response.
     {
         // The Specification says that the allocation request publication interval shall be randomized.
