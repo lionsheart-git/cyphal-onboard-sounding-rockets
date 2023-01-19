@@ -13,6 +13,7 @@
 
 #include "OpenCyphal.h"
 #include "CanardTransferReceiver.h"
+#include "Task.h"
 
 typedef struct scheduled_task {
     uint64_t next_run;
@@ -53,13 +54,15 @@ class Node : public CanardTransferReceiver {
      * a custom next_run value set.
      * @param task Task to run.
      */
-    void Schedule(task_t const & task);
+    void Schedule(Task &task);
 
     /**
      * @brief Sets the node to active.
      * @param started_at Time the node was started.
      */
     void StartNode(uint64_t started_at);
+
+    uint8_t Health();
 
   private:
 
@@ -70,7 +73,7 @@ class Node : public CanardTransferReceiver {
      */
     uavcan_node_GetInfo_Response_1_0 ProcessRequestNodeGetInfo();
 
-    std::vector<task_t> schedule_; /**< Vector containing all tasks. */
+    std::vector<Task*> schedule_; /**< Vector containing all tasks. */
     OpenCyphal &cyphal_; /**< Cyphal instance through which to publish and receive. */
     uavcan_node_GetInfo_Response_1_0 info_; /**< Information about this node */
     uint64_t started_at_; /**< Instant the node was started */

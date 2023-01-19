@@ -54,20 +54,23 @@ uavcan_node_GetInfo_Response_1_0 Node::ProcessRequestNodeGetInfo() {
 
 void Node::CheckScheduler(CanardMicrosecond monotonic_time) {
     if (online_) {
-        for (task_t &task : schedule_) {
-            if (monotonic_time >= task.next_run) {
-                task.next_run = monotonic_time + task.intervall;
-                task.task_function(cyphal_, monotonic_time, started_at_);
+        for (Task *task : schedule_) {
+            if (monotonic_time >= task->NextRun()) {
+                task->Execute(cyphal_, monotonic_time);
             }
         }
     }
 }
 
-void Node::Schedule(task_t const &task) {
-    schedule_.push_back(task);
+void Node::Schedule(Task &task) {
+    schedule_.push_back(&task);
 }
 
 void Node::StartNode(uint64_t started_at) {
     started_at_ = started_at;
     online_ = true;
+}
+
+uint8_t Node::Health() {
+    return cyphal_.Health();
 }
