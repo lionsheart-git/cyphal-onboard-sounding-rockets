@@ -30,6 +30,12 @@
 
 class OpenCyphal {
   public:
+    /**
+     * @brief Instantiates a cyphal instance.
+     *
+     * @param node_id The id of this node.
+     * @param transceiver The transceiver through which to communicate.
+     */
     explicit OpenCyphal(uint8_t node_id, CanardTransceiver &transceiver);
 
     /**
@@ -118,7 +124,7 @@ class OpenCyphal {
     O1HeapInstance *o1heap_allocator_; /**< O1Heap instance for cyphal to allocate memory */
     alignas(O1HEAP_ALIGNMENT) uint8_t heap_arena[O1HEAP_MEM_SIZE] = {0}; /**< Memory space for O1Heap toa allocate in */
 
-    std::vector<CanardTransferReceiver *> transfer_receiver_;
+    std::vector<CanardTransferReceiver *> transfer_receiver_; /**< Nodes that handle received transfers */
 
     /**
      * @brief Standard memAllocate from O1Heap examples.
@@ -146,23 +152,6 @@ class OpenCyphal {
     static void memFree(CanardInstance *const ins, void *const pointer) {
         O1HeapInstance *const heap = (O1HeapInstance *) ins->user_reference;
         o1heapFree(heap, pointer);
-    }
-
-    // Returns the 128-bit unique-ID of the local node. This value is used in uavcan.node.GetInfo.Response and during the
-    // plug-and-play node-ID allocation by uavcan.pnp.NodeIDAllocationData. The function is infallible.
-    static void getUniqueID(uint8_t out[uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_]) {
-        // A real hardware node would read its unique-ID from some hardware-specific source (typically stored in ROM).
-        // This example is a software-only node, so we store the unique-ID in a (read-only) register instead.
-        uavcan_register_Value_1_0 value = {0};
-        uavcan_register_Value_1_0_select_unstructured_(&value);
-        // Populate the default; it is only used at the first run if there is no such register.
-        for (uint8_t i = 0; i < uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_; i++) {
-            value.unstructured.value.elements[value.unstructured.value.count++] = (uint8_t) rand();  // NOLINT
-        }
-        // registerRead("uavcan.node.unique_id", &value);
-        assert(uavcan_register_Value_1_0_is_unstructured_(&value) &&
-            value.unstructured.value.count == uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_);
-        memcpy(&out[0], &value.unstructured.value, uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_);
     }
 };
 
