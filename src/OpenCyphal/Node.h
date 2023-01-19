@@ -15,12 +15,6 @@
 #include "CanardTransferReceiver.h"
 #include "Task.h"
 
-typedef struct scheduled_task {
-    uint64_t next_run;
-    int64_t intervall;
-    void (*task_function) (OpenCyphal &cyphal, uint64_t current_time, uint64_t started_at);
-} task_t;
-
 /**
  * @class Node
  * @brief Represents a basic cyphal node with its basic functions.
