@@ -9,25 +9,17 @@
 #include "Clock.h"
 #include "PMessageHeartbeat.h"
 #include "THeartbeat.h"
+#include "Macros.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
 #include "uavcan/_register/Value_1_0.h"
 #include "uavcan/pnp/NodeIDAllocationData_2_0.h"
 
 // Defines
-#define O1HEAP_MEM_SIZE 4096
-#define NODE_ID 7
-#define UPTIME_SEC_MAX 31
 #define TX_PROC_SLEEP_TIME 5000
-
-#define CAN_REDUNDANCY_FACTOR 1
-#define KILO 1000L
-#define MEGA ((int64_t) KILO * KILO)
 
 // Function prototypes
 static void getUniqueID(uint8_t out[uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_]);
-static void handle1HzLoop(OpenCyphal &cyphal, const CanardMicrosecond monotonic_time,
-                          CanardMicrosecond const started_at);
 
 // Returns the 128-bit unique-ID of the local node. This value is used in uavcan.node.GetInfo.Response and during the
 // plug-and-play node-ID allocation by uavcan.pnp.NodeIDAllocationData. The function is infallible.
