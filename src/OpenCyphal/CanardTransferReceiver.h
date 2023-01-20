@@ -11,8 +11,18 @@
 
 #include "canard.h"
 
+/**
+ * @brief Defines a function to process received transfers.
+ */
 class CanardTransferReceiver {
+
   public:
+    /**
+     * @brief Has to be implemented to receive a transfer.
+     *
+     * @param interface_index The interface index the transfer was received on.
+     * @param transfer The frame that was received.
+     */
     virtual void ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) = 0;
 };
 
