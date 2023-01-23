@@ -7,7 +7,9 @@ add_library(OpenCyphal
         PMessage.h
         PMessageHeartbeat.cpp PMessageHeartbeat.h
         Task.h Task.cpp
-        THeartbeat.cpp THeartbeat.h)
+        THeartbeat.cpp THeartbeat.h
+        SMessage.cpp SMessage.h
+        SMessageGetInfo.h SMessageGetInfo.cpp)
 
 target_include_directories(OpenCyphal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
