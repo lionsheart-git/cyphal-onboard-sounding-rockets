@@ -14,6 +14,7 @@
 #include "OpenCyphal.h"
 #include "CanardTransferReceiver.h"
 #include "Task.h"
+#include "SMessage.h"
 
 /**
  * @class Node
@@ -60,6 +61,8 @@ class Node : public CanardTransferReceiver {
      * @param started_at Time the node was started.
      */
     void StartNode(uint64_t started_at);
+
+    int8_t Subscribe(SMessage & message) const;
 
     uint8_t Health();
 

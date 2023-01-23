@@ -75,3 +75,12 @@ void Node::StartNode(uint64_t started_at) {
 uint8_t Node::Health() {
     return cyphal_.Health();
 }
+
+int8_t Node::Subscribe(SMessage &message) const {
+    cyphal_.Subscribe(message.TransferKind(),
+                      message.PortID(),
+                      message.Extent(),
+                      message.TransferIDTimeout(),
+                      message.Subscription());
+
+}
