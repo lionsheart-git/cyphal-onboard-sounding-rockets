@@ -10,6 +10,7 @@
 #include "PMessageHeartbeat.h"
 #include "THeartbeat.h"
 #include "Macros.h"
+#include "SMessageGetInfo.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
 #include "uavcan/_register/Value_1_0.h"
@@ -59,14 +60,10 @@ int main() {
     cyphal.addTransferReceiver(node);
 
     // Subscribe to GetInfo requests
-    static CanardRxSubscription rx;
-    const int8_t res =  //
-        cyphal.Subscribe(
-                          CanardTransferKindRequest,
-                          uavcan_node_GetInfo_1_0_FIXED_PORT_ID_,
-                          uavcan_node_GetInfo_Request_1_0_EXTENT_BYTES_,
-                          CANARD_DEFAULT_TRANSFER_ID_TIMEOUT_USEC,
-                          &rx);
+    SMessageGetInfo getInfo;
+
+    const int8_t res = node.Subscribe(getInfo);
+
     if (res < 0) {
         return -res;
     }
