@@ -11,6 +11,7 @@
 #include "THeartbeat.h"
 #include "Macros.h"
 #include "SMessageGetInfo.h"
+#include "PMessageByteArray.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
 #include "uavcan/_register/Value_1_0.h"
@@ -78,23 +79,16 @@ int main() {
 
     node.StartNode(started_at);
 
-    CanardTransferID id = 0;
+    PMessageByteArray message_byte_array(42);
 
-    CanardTransferMetadata metadata = {
-        .priority = CanardPriorityNominal,
-        .transfer_kind = CanardTransferKindMessage,
-        .port_id = 33,
-        .remote_node_id = CANARD_NODE_ID_UNSET,
-        .transfer_id = id++
-    };
+    size_t data_size = 256;
+    int8_t random_data[256];
 
-    uavcan_si_unit_angle_Scalar_1_0 angle;
-    angle.radian = 2;
+    for (int8_t i = 0; i < data_size; ++i) {
+        random_data[i] = i;
+    }
 
-    size_t serialized_size = uavcan_si_unit_angle_Scalar_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_;
-    uint8_t serialized[serialized_size];
-
-    uavcan_si_unit_angle_Scalar_1_0_serialize_(&angle, &serialized[0], &serialized_size);
+    message_byte_array.SerializeMessage(random_data, data_size);
 
     while (true) {
 
@@ -103,13 +97,13 @@ int main() {
 
         node.CheckScheduler(monotonic_time);
 
-        cyphal.Publish(monotonic_time + MEGA, &metadata, serialized_size, serialized);
+        node.Publish(monotonic_time + MEGA, message_byte_array);
 
         // Manage CAN RX/TX per redundant interface.
         cyphal.HandleTxRxQueues();
 
         // Run every 5ms to prevent using too much CPU.
-        usleep(TX_PROC_SLEEP_TIME);
+        // usleep(TX_PROC_SLEEP_TIME);
 
     }
 }
