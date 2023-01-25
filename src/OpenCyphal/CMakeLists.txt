@@ -1,7 +1,7 @@
 add_library(OpenCyphal
         OpenCyphal.cpp OpenCyphal.h
         CanardTransceiver.h
-        Node.cpp Node.h
+        Node.h Node.cpp
         CanardTransferReceiver.h
         Clock.cpp Clock.h
         IPMessage.h
@@ -9,7 +9,9 @@ add_library(OpenCyphal
         Task.h Task.cpp
         THeartbeat.cpp THeartbeat.h
         SMessage.cpp SMessage.h
-        SMessageGetInfo.h SMessageGetInfo.cpp PMessageByteArray.cpp PMessageByteArray.h)
+        SMessageGetInfo.h SMessageGetInfo.cpp
+        PMessageByteArray.cpp PMessageByteArray.h
+        TByteArray.cpp TByteArray.h)
 
 target_include_directories(OpenCyphal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
