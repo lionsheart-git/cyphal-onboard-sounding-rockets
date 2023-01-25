@@ -15,6 +15,7 @@
 #include "CanardTransferReceiver.h"
 #include "Task.h"
 #include "SMessage.h"
+#include "IPMessage.h"
 
 /**
  * @class Node
@@ -63,6 +64,8 @@ class Node : public CanardTransferReceiver {
     void StartNode(uint64_t started_at);
 
     int8_t Subscribe(SMessage & message) const;
+
+    int8_t Publish(CanardMicrosecond timeout, IPMessage & message) const;
 
     uint8_t Health();
 

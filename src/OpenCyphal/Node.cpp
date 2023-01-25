@@ -84,3 +84,9 @@ int8_t Node::Subscribe(SMessage &message) const {
                       message.Subscription());
 
 }
+
+int8_t Node::Publish(CanardMicrosecond const timeout, IPMessage &message) const {
+    CanardTransferMetadata metadata_ = message.Metadata();
+
+    cyphal_.Publish(timeout, &metadata_, message.SerializedSize(), message.SerializedMessage());
+}
