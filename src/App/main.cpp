@@ -7,16 +7,12 @@
 #include "OpenCyphal.h"
 #include "Node.h"
 #include "Clock.h"
-#include "PMessageHeartbeat.h"
 #include "THeartbeat.h"
 #include "Macros.h"
 #include "SMessageGetInfo.h"
 #include "PMessageByteArray.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
-#include "uavcan/_register/Value_1_0.h"
-#include "uavcan/pnp/NodeIDAllocationData_2_0.h"
-#include "uavcan/si/unit/angle/Scalar_1_0.h"
 
 // Defines
 #define TX_PROC_SLEEP_TIME 5000
