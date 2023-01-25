@@ -4,7 +4,7 @@ add_library(OpenCyphal
         Node.cpp Node.h
         CanardTransferReceiver.h
         Clock.cpp Clock.h
-        PMessage.h
+        IPMessage.h
         PMessageHeartbeat.cpp PMessageHeartbeat.h
         Task.h Task.cpp
         THeartbeat.cpp THeartbeat.h

@@ -4,8 +4,8 @@
  * @date 19.01.23
 */
 
-#ifndef SOCKETCAN_SRC_OPENCYPHAL_PMESSAGE_H_
-#define SOCKETCAN_SRC_OPENCYPHAL_PMESSAGE_H_
+#ifndef SOCKETCAN_SRC_OPENCYPHAL_IPMESSAGE_H_
+#define SOCKETCAN_SRC_OPENCYPHAL_IPMESSAGE_H_
 
 #include "canard.h"
 
@@ -14,7 +14,7 @@
  *
  * All messages that are published should inherit from this base class.
  */
-class PMessage {
+class IPMessage {
   public:
     /**
      * @brief Metadata needed to transfer the payload.
@@ -39,4 +39,4 @@ class PMessage {
 
 };
 
-#endif //SOCKETCAN_SRC_OPENCYPHAL_PMESSAGE_H_
+#endif //SOCKETCAN_SRC_OPENCYPHAL_IPMESSAGE_H_

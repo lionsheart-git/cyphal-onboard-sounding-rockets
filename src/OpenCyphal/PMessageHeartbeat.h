@@ -11,7 +11,7 @@
 
 #include "uavcan/node/Heartbeat_1_0.h"
 
-#include "PMessage.h"
+#include "IPMessage.h"
 
 /**
  * @brief Message for publishing a heartbeat.
@@ -19,7 +19,7 @@
  * This class should be only instantiated once for each node sending a heartbeat. The internal counter needed to keep
  * track of the heartbeats number is needed.
  */
-class PMessageHeartbeat : public PMessage{
+class PMessageHeartbeat : public IPMessage{
   public:
     /**
      * @brief Constructs a new instance of the heartbeat message.
@@ -54,7 +54,7 @@ class PMessageHeartbeat : public PMessage{
     uint8_t *SerializedMessage() override;
 
     /**
-     * @copydoc PMessage::SerializedSize
+     * @copydoc IPMessage::SerializedSize
      */
     size_t SerializedSize() const override;
 
