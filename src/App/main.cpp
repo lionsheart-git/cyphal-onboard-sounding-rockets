@@ -15,6 +15,7 @@
 #include "uavcan/node/GetInfo_1_0.h"
 #include "uavcan/_register/Value_1_0.h"
 #include "uavcan/pnp/NodeIDAllocationData_2_0.h"
+#include "uavcan/si/unit/angle/Scalar_1_0.h"
 
 // Defines
 #define TX_PROC_SLEEP_TIME 5000
@@ -77,12 +78,32 @@ int main() {
 
     node.StartNode(started_at);
 
+    CanardTransferID id = 0;
+
+    CanardTransferMetadata metadata = {
+        .priority = CanardPriorityNominal,
+        .transfer_kind = CanardTransferKindMessage,
+        .port_id = 33,
+        .remote_node_id = CANARD_NODE_ID_UNSET,
+        .transfer_id = id++
+    };
+
+    uavcan_si_unit_angle_Scalar_1_0 angle;
+    angle.radian = 2;
+
+    size_t serialized_size = uavcan_si_unit_angle_Scalar_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_;
+    uint8_t serialized[serialized_size];
+
+    uavcan_si_unit_angle_Scalar_1_0_serialize_(&angle, &serialized[0], &serialized_size);
+
     while (true) {
 
         // Run a trivial scheduler polling the loops that run the business logic.
         CanardMicrosecond monotonic_time = Clock::GetMonotonicMicroseconds();
 
         node.CheckScheduler(monotonic_time);
+
+        cyphal.Publish(monotonic_time + MEGA, &metadata, serialized_size, serialized);
 
         // Manage CAN RX/TX per redundant interface.
         cyphal.HandleTxRxQueues();
