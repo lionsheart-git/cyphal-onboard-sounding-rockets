@@ -103,7 +103,7 @@ int main() {
         cyphal.HandleTxRxQueues();
 
         // Run every 5ms to prevent using too much CPU.
-        // usleep(TX_PROC_SLEEP_TIME);
+        usleep(TX_PROC_SLEEP_TIME);
 
     }
 }
