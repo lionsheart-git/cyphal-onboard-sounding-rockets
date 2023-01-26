@@ -13,9 +13,9 @@
 
 #include "OpenCyphal.h"
 #include "CanardTransferReceiver.h"
-#include "Task.h"
 #include "SMessage.h"
 #include "IPMessage.h"
+class Task;
 
 /**
  * @class Node

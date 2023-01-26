@@ -36,7 +36,7 @@ class THeartbeat : public Task {
      * @copydoc Task::Execute()
      * Publishes the heartbeat.
      */
-    void Execute(OpenCyphal & cyphal, uint64_t current_time) override;
+    void Execute(Node &node, uint64_t current_time) override;
 
   private:
     PMessageHeartbeat heartbeat_; /**< Heartbeat message to be published. */

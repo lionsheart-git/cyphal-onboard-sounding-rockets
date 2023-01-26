@@ -9,7 +9,7 @@
 
 #include <cstdint>
 
-#include "OpenCyphal.h"
+#include "Node.h"
 
 /**
  * @brief Base class for a task to be run by the nodes scheduler.
@@ -41,10 +41,10 @@ class Task {
     /**
      * @brief Executes the task.
      *
-     * @param cyphal Cyphal instance used to publish messages of the task.
+     * @param node Cyphal instance used to publish messages of the task.
      * @param current_time Current time the task is executed at.
      */
-    virtual void Execute(OpenCyphal & cyphal, uint64_t current_time) = 0;
+    virtual void Execute(Node &node, uint64_t current_time) = 0;
 
   private:
     uint64_t next_run_; /**< Time the task has to be run again */

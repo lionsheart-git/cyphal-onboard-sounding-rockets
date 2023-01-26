@@ -7,6 +7,7 @@
 #include "Node.h"
 
 #include "Clock.h"
+#include "Task.h"
 
 Node::Node(OpenCyphal &cyphal, uavcan_node_GetInfo_Response_1_0 info)
     : cyphal_(cyphal), info_(info), started_at_() {
@@ -57,7 +58,7 @@ void Node::CheckScheduler(CanardMicrosecond monotonic_time) {
         for (Task *task : schedule_) {
             if (monotonic_time >= task->NextRun()) {
                 task->UpdateNextRun(monotonic_time);
-                task->Execute(cyphal_, monotonic_time);
+                task->Execute(*this, monotonic_time);
             }
         }
     }

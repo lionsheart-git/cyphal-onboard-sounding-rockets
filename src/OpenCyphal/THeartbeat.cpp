@@ -10,15 +10,12 @@ THeartbeat::THeartbeat(uint64_t started_at, int64_t interval)
 
 }
 
-void THeartbeat::Execute(OpenCyphal &cyphal, uint64_t current_time) {
-    heartbeat_.SerializeMessage(current_time, cyphal.Health());
-    CanardTransferMetadata metadata = heartbeat_.Metadata();
+void THeartbeat::Execute(Node &node, uint64_t current_time) {
+    heartbeat_.SerializeMessage(current_time, node.Health());
 
-    cyphal.Publish(
+    node.Publish(
         current_time + MEGA,  // Set transmission deadline 1 second, optimal for heartbeat.
-        &metadata,
-        heartbeat_.SerializedSize(),
-        heartbeat_.SerializedMessage()
+        heartbeat_
         );
 }
 
