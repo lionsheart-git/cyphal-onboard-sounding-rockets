@@ -93,7 +93,7 @@ int main() {
 
         node.CheckScheduler(monotonic_time);
 
-        node.Publish(monotonic_time + MEGA, message_byte_array);
+        // node.Publish(monotonic_time + MEGA, message_byte_array);
 
         // Manage CAN RX/TX per redundant interface.
         cyphal.HandleTxRxQueues();
