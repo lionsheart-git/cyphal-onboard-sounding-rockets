@@ -69,6 +69,10 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
 
     uint8_t Health();
 
+    uavcan_node_GetInfo_Response_1_0 GetInfo() const;
+
+    uint64_t StartedAt() const;
+
   private:
 
     /**

@@ -92,3 +92,11 @@ int32_t Node::Publish(CanardMicrosecond timeout, IPMessage &message) {
 
     return OpenCyphal::Publish(timeout, &metadata_, message.SerializedSize(), message.SerializedMessage());
 }
+
+uavcan_node_GetInfo_Response_1_0 Node::GetInfo() const {
+    return info_;
+}
+
+uint64_t Node::StartedAt() const {
+    return started_at_;
+}
