@@ -25,7 +25,7 @@ class THeartbeat : public Task {
      * @param started_at The instant the task is created.
      * @param interval The interval the task should be run at.
      */
-    THeartbeat(uint64_t started_at, int64_t interval);
+    THeartbeat(Node const & node, int64_t interval);
 
     /**
      * @copydoc Task::Interval()

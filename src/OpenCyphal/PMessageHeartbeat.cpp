@@ -7,8 +7,8 @@
 #include "PMessageHeartbeat.h"
 
 #include "Macros.h"
-PMessageHeartbeat::PMessageHeartbeat(uint64_t started_at) :
-    started_at_(started_at), transfer_id_(0), serialized_()
+PMessageHeartbeat::PMessageHeartbeat(Node const &parent_node) :
+    node_(&parent_node), started_at_(), transfer_id_(0), serialized_()
 {
 }
 
@@ -27,7 +27,7 @@ CanardTransferMetadata PMessageHeartbeat::Metadata() {
 
 uint8_t *PMessageHeartbeat::SerializeMessage(uint64_t current_time, uint8_t health) {
     uavcan_node_Heartbeat_1_0 heartbeat = {0};
-    heartbeat.uptime = (uint32_t) ((current_time - started_at_) / MEGA);
+    heartbeat.uptime = (uint32_t) ((current_time - node_->StartedAt()) / MEGA);
     heartbeat.mode.value = uavcan_node_Mode_1_0_OPERATIONAL;
     heartbeat.health.value = health;
 

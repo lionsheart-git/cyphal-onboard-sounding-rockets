@@ -5,8 +5,8 @@
 */
 
 #include "THeartbeat.h"
-THeartbeat::THeartbeat(uint64_t started_at, int64_t interval)
-: heartbeat_(started_at), interval_(interval) {
+THeartbeat::THeartbeat(Node const & node, int64_t interval)
+: heartbeat_(node), interval_(interval) {
 
 }
 

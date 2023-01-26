@@ -12,6 +12,7 @@
 #include "uavcan/node/Heartbeat_1_0.h"
 
 #include "IPMessage.h"
+#include "Node.h"
 
 /**
  * @brief Message for publishing a heartbeat.
@@ -28,7 +29,7 @@ class PMessageHeartbeat : public IPMessage{
      *
      * @param started_at Time the node was started. Needed to calculate uptime.
      */
-    explicit PMessageHeartbeat(uint64_t started_at);
+    explicit PMessageHeartbeat(Node const &parent_node);
 
     /**
      * @brief Metadata of the heartbeat message.
@@ -59,6 +60,7 @@ class PMessageHeartbeat : public IPMessage{
     size_t SerializedSize() const override;
 
   private:
+    Node const *node_;
     uint64_t started_at_; /**< Time the node was started */
     uint8_t serialized_[uavcan_node_Heartbeat_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_]; /** Buffer holding the serialized message */
     uint8_t transfer_id_; /**< Counter keeping track of the current transfer id. Incremented each time a message is send. */
