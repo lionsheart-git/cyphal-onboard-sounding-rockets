@@ -9,8 +9,8 @@
 #include "Clock.h"
 #include "Task.h"
 
-Node::Node(OpenCyphal &cyphal, uavcan_node_GetInfo_Response_1_0 info)
-    : cyphal_(cyphal), info_(info), started_at_() {
+Node::Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_Response_1_0 info)
+    : OpenCyphal(node_id, transceiver), info_(info), started_at_() {
 }
 
 void Node::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) {
@@ -24,7 +24,7 @@ void Node::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer con
             if (res >= 0) {
                 CanardTransferMetadata meta = transfer.metadata;
                 meta.transfer_kind = CanardTransferKindResponse;
-                cyphal_.Publish(transfer.timestamp_usec + MEGA, &meta, serialized_size, serialized, interface_index);
+                OpenCyphal::Publish(transfer.timestamp_usec + MEGA, &meta, serialized_size, serialized, interface_index);
             } else {
                 assert(false);
             }
@@ -74,11 +74,11 @@ void Node::StartNode(uint64_t started_at) {
 }
 
 uint8_t Node::Health() {
-    return cyphal_.Health();
+    return OpenCyphal::Health();
 }
 
-int8_t Node::Subscribe(SMessage &message) const {
-    return cyphal_.Subscribe(message.TransferKind(),
+int8_t Node::Subscribe(SMessage &message) {
+    return OpenCyphal::Subscribe(message.TransferKind(),
                       message.PortID(),
                       message.Extent(),
                       message.TransferIDTimeout(),
@@ -86,8 +86,8 @@ int8_t Node::Subscribe(SMessage &message) const {
 
 }
 
-int8_t Node::Publish(CanardMicrosecond const timeout, IPMessage &message) const {
+int32_t Node::Publish(CanardMicrosecond timeout, IPMessage &message) {
     CanardTransferMetadata metadata_ = message.Metadata();
 
-    return cyphal_.Publish(timeout, &metadata_, message.SerializedSize(), message.SerializedMessage());
+    return OpenCyphal::Publish(timeout, &metadata_, message.SerializedSize(), message.SerializedMessage());
 }

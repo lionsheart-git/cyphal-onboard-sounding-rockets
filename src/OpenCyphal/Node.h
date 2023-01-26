@@ -21,7 +21,7 @@ class Task;
  * @class Node
  * @brief Represents a basic cyphal node with its basic functions.
  */
-class Node : public CanardTransferReceiver {
+class Node : public CanardTransferReceiver, public OpenCyphal {
 
     /**
      * @todo Currently a new cyphal class has to be created for every node with a different id and then handed to the
@@ -29,7 +29,7 @@ class Node : public CanardTransferReceiver {
      * mitigated by moving the cyphal instantiation inside the Node class.
      */
   public:
-    Node(OpenCyphal & cyphal, uavcan_node_GetInfo_Response_1_0 info);
+    Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_Response_1_0 info);
 
     /**
      * @brief Processes the received transfers.
@@ -63,9 +63,9 @@ class Node : public CanardTransferReceiver {
      */
     void StartNode(uint64_t started_at);
 
-    int8_t Subscribe(SMessage & message) const;
+    int8_t Subscribe(SMessage & message);
 
-    int8_t Publish(CanardMicrosecond timeout, IPMessage & message) const;
+    int32_t Publish(CanardMicrosecond timeout, IPMessage & message);
 
     uint8_t Health();
 
@@ -79,7 +79,6 @@ class Node : public CanardTransferReceiver {
     uavcan_node_GetInfo_Response_1_0 ProcessRequestNodeGetInfo();
 
     std::vector<Task*> schedule_; /**< Vector containing all tasks. */
-    OpenCyphal &cyphal_; /**< Cyphal instance through which to publish and receive. */
     uavcan_node_GetInfo_Response_1_0 info_; /**< Information about this node */
     uint64_t started_at_; /**< Instant the node was started */
     bool online_; /**< Indicator if the node is active */

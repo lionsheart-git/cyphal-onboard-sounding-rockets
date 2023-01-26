@@ -42,8 +42,6 @@ int main() {
     // Init SocketCanTransceiver
     SocketCANTransceiver transceiver("vcan0", true);
 
-    OpenCyphal cyphal(NODE_ID, transceiver);
-
     uavcan_node_GetInfo_Response_1_0 node_info;
     node_info.name.count = strlen(NODE_NAME);
     memcpy(&node_info.name.elements, NODE_NAME, node_info.name.count);
@@ -54,9 +52,9 @@ int main() {
 
     getUniqueID(node_info.unique_id);
 
-    Node node(cyphal, node_info);
+    Node node(NODE_ID, transceiver, node_info);
 
-    cyphal.addTransferReceiver(node);
+    node.addTransferReceiver(node);
 
     // Subscribe to GetInfo requests
     SMessageGetInfo getInfo;
@@ -93,7 +91,7 @@ int main() {
         node.CheckScheduler(monotonic_time);
 
         // Manage CAN RX/TX per redundant interface.
-        cyphal.HandleTxRxQueues();
+        node.HandleTxRxQueues();
 
         // Run every 5ms to prevent using too much CPU.
         usleep(TX_PROC_SLEEP_TIME);
