@@ -7,13 +7,6 @@
 #ifndef SOCKETCAN_SRC_OPENCYPHAL_OPENCYPHAL_H_
 #define SOCKETCAN_SRC_OPENCYPHAL_OPENCYPHAL_H_
 
-#define CAN_REDUNDANCY_FACTOR 1
-#define O1HEAP_MEM_SIZE 4096
-#define NODE_ID 96
-
-#define KILO 1000L
-#define MEGA ((int64_t) KILO * KILO)
-
 #include <cassert>
 #include <ctime>
 #include <cstdlib>
@@ -25,6 +18,7 @@
 #include "uavcan/node/GetInfo_1_0.h"
 #include "uavcan/_register/Value_1_0.h"
 
+#include "Macros.h"
 #include "CanardTransceiver.h"
 #include "CanardTransferReceiver.h"
 

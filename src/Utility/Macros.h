@@ -19,4 +19,12 @@
 #define MEGA ((int64_t) KILO * KILO)
 #endif
 
+#ifndef O1HEAP_MEM_SiZE
+#define O1HEAP_MEM_SIZE 4096
+#endif
+
+#ifndef NODE_ID
+#define NODE_ID 96
+#endif
+
 #endif //SOCKETCAN_SRC_UTILITY_MACROS_H_
