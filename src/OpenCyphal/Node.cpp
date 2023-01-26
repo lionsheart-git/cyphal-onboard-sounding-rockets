@@ -11,6 +11,7 @@
 
 Node::Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_Response_1_0 info)
     : OpenCyphal(node_id, transceiver), info_(info), started_at_() {
+    OpenCyphal::addTransferReceiver(*this);
 }
 
 void Node::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) {

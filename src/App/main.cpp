@@ -54,8 +54,6 @@ int main() {
 
     Node node(NODE_ID, transceiver, node_info);
 
-    node.addTransferReceiver(node);
-
     // Subscribe to GetInfo requests
     SMessageGetInfo getInfo;
 
