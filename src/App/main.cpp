@@ -69,7 +69,7 @@ int main() {
     // Now the node is initialized and we're ready to roll.
     auto started_at = Clock::GetMonotonicMicroseconds();
 
-    THeartbeat heartbeat(started_at, MEGA);
+    THeartbeat heartbeat(node, MEGA);
     node.Schedule(heartbeat);
 
     TByteArray byte_array(32, random_data, data_size, MEGA);
