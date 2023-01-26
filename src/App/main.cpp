@@ -10,16 +10,12 @@
 #include "THeartbeat.h"
 #include "Macros.h"
 #include "SMessageGetInfo.h"
-#include "PMessageByteArray.h"
 #include "TByteArray.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
 
 // Defines
 #define TX_PROC_SLEEP_TIME 5000
-
-// Function prototypes
-static void getUniqueID(uint8_t out[uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_]);
 
 // Returns the 128-bit unique-ID of the local node. This value is used in uavcan.node.GetInfo.Response and during the
 // plug-and-play node-ID allocation by uavcan.pnp.NodeIDAllocationData. The function is infallible.
