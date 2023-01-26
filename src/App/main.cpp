@@ -11,6 +11,7 @@
 #include "Macros.h"
 #include "SMessageGetInfo.h"
 #include "PMessageByteArray.h"
+#include "TByteArray.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
 
@@ -66,17 +67,6 @@ int main() {
         return -res;
     }
 
-    // Now the node is initialized and we're ready to roll.
-    auto started_at = Clock::GetMonotonicMicroseconds();
-
-    THeartbeat heartbeat(started_at, MEGA);
-
-    node.Schedule(heartbeat);
-
-    node.StartNode(started_at);
-
-    PMessageByteArray message_byte_array(42);
-
     size_t data_size = 256;
     int8_t random_data[256];
 
@@ -84,7 +74,16 @@ int main() {
         random_data[i] = i;
     }
 
-    message_byte_array.SerializeMessage(random_data, data_size);
+    // Now the node is initialized and we're ready to roll.
+    auto started_at = Clock::GetMonotonicMicroseconds();
+
+    THeartbeat heartbeat(started_at, MEGA);
+    node.Schedule(heartbeat);
+
+    TByteArray byte_array(32, random_data, data_size, MEGA);
+    node.Schedule(byte_array);
+
+    node.StartNode(started_at);
 
     while (true) {
 
@@ -92,8 +91,6 @@ int main() {
         CanardMicrosecond monotonic_time = Clock::GetMonotonicMicroseconds();
 
         node.CheckScheduler(monotonic_time);
-
-        // node.Publish(monotonic_time + MEGA, message_byte_array);
 
         // Manage CAN RX/TX per redundant interface.
         cyphal.HandleTxRxQueues();
