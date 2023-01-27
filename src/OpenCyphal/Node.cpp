@@ -8,10 +8,26 @@
 
 #include "Clock.h"
 #include "Task.h"
+#include "SMessageGetInfo.h"
+#include "THeartbeat.h"
 
 Node::Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_Response_1_0 info)
     : OpenCyphal(node_id, transceiver), info_(info), started_at_() {
     OpenCyphal::addTransferReceiver(*this);
+
+    //@todo Fix all this creation of pointers.
+    // Subscribe to GetInfo requests
+    SMessageGetInfo* getInfo = new SMessageGetInfo();
+    const int8_t res = Subscribe(*getInfo);
+    if (res < 0) {
+        //@todo Throw some kind of exception.
+        // return -res;
+    }
+
+    subscribers_.push_back(getInfo);
+
+    THeartbeat* heartbeat = new THeartbeat(*this, MEGA);
+    Schedule(*heartbeat);
 }
 
 void Node::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) {
@@ -99,4 +115,12 @@ uavcan_node_GetInfo_Response_1_0 Node::GetInfo() const {
 
 uint64_t Node::StartedAt() const {
     return started_at_;
+}
+
+void Node::Schedule(Task *task) {
+    schedule_.push_back(task);
+}
+
+Node::~Node() {
+    // Deletion of Tasks from heap
 }

@@ -9,6 +9,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <memory>
 
 #include "Node.h"
 #include "CanardTransceiver.h"
@@ -18,8 +19,8 @@ class NodeFactory {
   public:
     NodeFactory(uint8_t *used_ids, size_t size);
 
-    Node CreateNode();
-    Node CreateNode(uint8_t node_id);
+    Node * CreateNode();
+    Node * CreateNode(uint8_t node_id);
 
     void AddTransceiver(CanardTransceiver &transceiver);
 

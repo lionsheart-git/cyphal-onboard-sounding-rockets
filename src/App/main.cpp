@@ -39,12 +39,13 @@ int main() {
     // Init SocketCanTransceiver
     SocketCANTransceiver transceiver("vcan0", true);
     SocketCANTransceiver second_transceiver("vcan0", true);
+    SocketCANTransceiver third_transceiver("vcan0", true);
 
     uint8_t used_ids[] = {96};
     size_t used_ids_size = sizeof (used_ids);
 
     NodeFactory factory(used_ids, used_ids_size);
-    factory.AddTransceiver(second_transceiver);
+    factory.AddTransceiver(third_transceiver);
 
     uavcan_node_GetInfo_Response_1_0 node_info;
     node_info.name.count = strlen(NODE_NAME);
@@ -58,23 +59,12 @@ int main() {
 
     Node node(NODE_ID, transceiver, node_info);
 
-    // Subscribe to GetInfo requests
-    SMessageGetInfo getInfo;
-
-    const int8_t res = node.Subscribe(getInfo);
-
-    if (res < 0) {
-        return -res;
-    }
-
     size_t data_size = 256;
     int8_t random_data[256];
 
     for (int8_t i = 0; i < data_size; ++i) {
         random_data[i] = i;
     }
-
-//    Node node2 = factory.CreateNode(67);
 
     uavcan_node_GetInfo_Response_1_0 node_info2;
 
@@ -90,29 +80,17 @@ int main() {
     getUniqueID(node_info2.unique_id);
     Node node2(67, second_transceiver, node_info2);
 
-    SMessageGetInfo getInfo2;
-
-    const int8_t res2 = node2.Subscribe(getInfo2);
-
-    if (res2 < 0) {
-        return -res2;
-    }
-
+    Node* node3 = factory.CreateNode(42);
 
     // Now the node is initialized and we're ready to roll.
     auto started_at = Clock::GetMonotonicMicroseconds();
-
-    THeartbeat heartbeat(node, MEGA);
-    node.Schedule(heartbeat);
-
-    THeartbeat second_heartbeat(node, MEGA);
-    node2.Schedule(second_heartbeat);
 
     TByteArray byte_array(32, random_data, data_size, MEGA);
     node.Schedule(byte_array);
 
     node.StartNode(started_at);
     node2.StartNode(started_at);
+    node3->StartNode(started_at);
 
     while (true) {
 
@@ -121,10 +99,12 @@ int main() {
 
         node.CheckScheduler(monotonic_time);
         node2.CheckScheduler(monotonic_time);
+        node3->CheckScheduler(monotonic_time);
 
         // Manage CAN RX/TX per redundant interface.
         node.HandleTxRxQueues();
         node2.HandleTxRxQueues();
+        node3->HandleTxRxQueues();
 
         // Run every 5ms to prevent using too much CPU.
         usleep(TX_PROC_SLEEP_TIME);

@@ -20,7 +20,7 @@ NodeFactory::NodeFactory(uint8_t *used_ids, size_t size) {
     }
 }
 
-Node NodeFactory::CreateNode() {
+Node * NodeFactory::CreateNode() {
 
     std::default_random_engine generator;
     std::uniform_int_distribution<uint8_t> distribution(0,253); // 255 - 2 for reserved addresses
@@ -40,7 +40,7 @@ Node NodeFactory::CreateNode() {
     return CreateNode(random_id);
 }
 
-Node NodeFactory::CreateNode(uint8_t node_id) {
+Node * NodeFactory::CreateNode(uint8_t node_id) {
     used_ids_.push_back(node_id);
 
     uavcan_node_GetInfo_Response_1_0 node_info;
@@ -62,11 +62,11 @@ Node NodeFactory::CreateNode(uint8_t node_id) {
         // Could be mitigated if transceiver is handed in via constructor.
     }
 
-    Node node(node_id, *transceiver_[0], node_info);
+    Node* node = new Node(node_id, *transceiver_[0], node_info);
 
     for (int i = 1; i < CAN_REDUNDANCY_FACTOR; ++i) {
         if (transceiver_[i] != nullptr) {
-            node.addTransceiver(*transceiver_[i]);
+            node->addTransceiver(*transceiver_[i]);
         }
     }
 

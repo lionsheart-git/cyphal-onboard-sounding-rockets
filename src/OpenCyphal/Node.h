@@ -30,6 +30,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      */
   public:
     Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_Response_1_0 info);
+    ~Node();
 
     /**
      * @brief Processes the received transfers.
@@ -82,6 +83,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      */
     uavcan_node_GetInfo_Response_1_0 ProcessRequestNodeGetInfo();
 
+    std::vector<SMessage*> subscribers_;
     std::vector<Task*> schedule_; /**< Vector containing all tasks. */
     uavcan_node_GetInfo_Response_1_0 info_; /**< Information about this node */
     uint64_t started_at_; /**< Instant the node was started */
