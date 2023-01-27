@@ -37,7 +37,7 @@ Node NodeFactory::CreateNode() {
         break;
     }
 
-    return std::move(CreateNode(random_id));
+    return CreateNode(random_id);
 }
 
 Node NodeFactory::CreateNode(uint8_t node_id) {
@@ -47,6 +47,9 @@ Node NodeFactory::CreateNode(uint8_t node_id) {
 
     std::string name("org.icarus.nodefactory.");
     name.append(std::to_string(node_id));
+
+    node_info.name.count = name.size();
+    memcpy(&node_info.name.elements, name.c_str(), node_info.name.count);
 
     node_info.software_version.major = VERSION_MAJOR;
     node_info.software_version.minor = VERSION_MINOR;
@@ -67,7 +70,7 @@ Node NodeFactory::CreateNode(uint8_t node_id) {
         }
     }
 
-    return std::move(node);
+    return node;
 }
 
 // Returns the 128-bit unique-ID of the local node. This value is used in uavcan.node.GetInfo.Response and during the
