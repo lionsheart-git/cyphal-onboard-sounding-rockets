@@ -60,7 +60,7 @@ class PMessageHeartbeat : public IPMessage{
     size_t SerializedSize() const override;
 
   private:
-    Node const *node_;
+    Node const *node_; /**< Reference to parent Node  to acquire status data. */
     uint64_t started_at_; /**< Time the node was started */
     uint8_t serialized_[uavcan_node_Heartbeat_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_]; /** Buffer holding the serialized message */
     uint8_t transfer_id_; /**< Counter keeping track of the current transfer id. Incremented each time a message is send. */
