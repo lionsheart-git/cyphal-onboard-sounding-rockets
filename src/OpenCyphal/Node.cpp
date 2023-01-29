@@ -117,10 +117,6 @@ uint64_t Node::StartedAt() const {
     return started_at_;
 }
 
-void Node::Schedule(Task *task) {
-    schedule_.push_back(task);
-}
-
 Node::~Node() {
     // Deletion of Tasks from heap
 }
