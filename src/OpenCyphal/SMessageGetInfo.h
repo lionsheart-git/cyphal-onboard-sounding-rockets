@@ -9,9 +9,16 @@
 
 #include "SMessage.h"
 
+/**
+ * @class SMessageGetInfo
+ * @brief Subscribe to get info request messages.
+ */
 class SMessageGetInfo : public SMessage {
 
   public:
+    /**
+     * @brief Constructs a new GetInfo subscribe message.
+     */
     SMessageGetInfo();
 
 };
