@@ -29,6 +29,14 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      * mitigated by moving the cyphal instantiation inside the Node class.
      */
   public:
+
+    /**
+     * @brief Creates a new cyphal communication node.
+     *
+     * @param node_id Id of the node.
+     * @param transceiver Transceiver of the node.
+     * @param info Info of the node.
+     */
     Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_Response_1_0 info);
     ~Node();
 
@@ -64,14 +72,45 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      */
     void StartNode(uint64_t started_at);
 
+    /**
+     * @brief Subscribe to a topic.
+     *
+     * @param message Message with topic to subscribe to.
+     * @return Information if the subscription was successful.
+     * @retval 1 Subscription was created as requested.
+     * @retval 0 Subscription already existed. Existing subscription is terminated and then a new one is created in its place.
+     * @retval Negative Negated errno like invalid arguments.
+     */
     int8_t Subscribe(SMessage & message);
 
+    /**
+     * @brief Publishes a new message.
+     *
+     * @param timeout Timeout until the message has to be published.
+     * @param message Message to publish.
+     * @return Number of frames enqueued or negated error.
+     */
     int32_t Publish(CanardMicrosecond timeout, IPMessage & message);
 
+    /**
+     * @brief Health value of the Node.
+     *
+     * @return uavcan_node_Health_1_0 health value.
+     */
     uint8_t Health();
 
+    /**
+     * @brief Gets the information of the node.
+     *
+     * @return Struct containing all the information.
+     */
     uavcan_node_GetInfo_Response_1_0 GetInfo() const;
 
+    /**
+     * @brief Time the node was started.
+     *
+     * @return The time the node was started.
+     */
     uint64_t StartedAt() const;
 
   private:
@@ -83,7 +122,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      */
     uavcan_node_GetInfo_Response_1_0 ProcessRequestNodeGetInfo();
 
-    std::vector<SMessage*> subscribers_;
+    std::vector<SMessage*> subscribers_; /**< List of all subscribers. */
     std::vector<Task*> schedule_; /**< Vector containing all tasks. */
     uavcan_node_GetInfo_Response_1_0 info_; /**< Information about this node */
     uint64_t started_at_; /**< Instant the node was started */
