@@ -98,6 +98,11 @@ class OpenCyphal {
      */
     void addTransceiver(CanardTransceiver &transceiver);
 
+    /**
+     * @brief Adds a new handler for received transfers.
+     *
+     * @param transfer_receiver Transfer handler to add.
+     */
     void addTransferReceiver(CanardTransferReceiver &transfer_receiver);
 
     /**
