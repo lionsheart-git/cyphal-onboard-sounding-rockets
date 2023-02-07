@@ -17,14 +17,14 @@ Node::Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_
 
     //@todo Fix all this creation of pointers.
     // Subscribe to GetInfo requests
-    SMessageGetInfo* getInfo = new SMessageGetInfo();
+    std::unique_ptr<SMessageGetInfo> getInfo = std::make_unique<SMessageGetInfo>();
     const int8_t res = Subscribe(*getInfo);
     if (res < 0) {
         //@todo Throw some kind of exception.
         // return -res;
     }
 
-    subscribers_.push_back(getInfo);
+    subscribers_.push_back(std::move(getInfo));
 
     THeartbeat* heartbeat = new THeartbeat(*this, MEGA);
     Schedule(*heartbeat);

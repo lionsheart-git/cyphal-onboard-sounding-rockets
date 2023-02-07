@@ -8,6 +8,7 @@
 #define SOCKETCAN_SRC_OPENCYPHAL_NODE_H_
 
 #include <cstdint>
+#include <memory>
 
 #include "uavcan/node/GetInfo_1_0.h"
 
@@ -122,7 +123,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      */
     uavcan_node_GetInfo_Response_1_0 ProcessRequestNodeGetInfo();
 
-    std::vector<SMessage*> subscribers_; /**< List of all subscribers. */
+    std::vector<std::unique_ptr<SMessage>> subscribers_; /**< List of all subscribers. */
     std::vector<Task*> schedule_; /**< Vector containing all tasks. */
     uavcan_node_GetInfo_Response_1_0 info_; /**< Information about this node */
     uint64_t started_at_; /**< Instant the node was started */
