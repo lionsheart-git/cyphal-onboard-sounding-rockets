@@ -11,8 +11,8 @@
 #include "SMessageGetInfo.h"
 #include "THeartbeat.h"
 
-Node::Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_Response_1_0 info)
-    : OpenCyphal(node_id, transceiver), info_(info), started_at_() {
+Node::Node(uint8_t node_id, std::unique_ptr<CanardTransceiver> transceiver, uavcan_node_GetInfo_Response_1_0 info)
+    : OpenCyphal(node_id, std::move(transceiver)), info_(info), started_at_() {
     OpenCyphal::addTransferReceiver(*this);
 
     //@todo Fix all this creation of pointers.

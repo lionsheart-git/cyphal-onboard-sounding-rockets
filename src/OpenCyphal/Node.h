@@ -38,7 +38,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      * @param transceiver Transceiver of the node.
      * @param info Info of the node.
      */
-    Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_Response_1_0 info);
+    Node(uint8_t node_id, std::unique_ptr<CanardTransceiver> transceiver, uavcan_node_GetInfo_Response_1_0 info);
     ~Node();
 
     /**
