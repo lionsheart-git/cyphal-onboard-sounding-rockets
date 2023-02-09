@@ -80,7 +80,7 @@ int main() {
     getUniqueID(node_info2.unique_id);
     Node node2(67, second_transceiver, node_info2);
 
-    Node* node3 = factory.CreateNode(42);
+    auto node3 = factory.CreateNode(42);
 
     // Now the node is initialized and we're ready to roll.
     auto started_at = Clock::GetMonotonicMicroseconds();

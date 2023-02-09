@@ -34,7 +34,7 @@ class NodeFactory {
      *
      * @return Pointer to the new node.
      */
-    Node * CreateNode();
+    std::unique_ptr<Node> CreateNode();
 
     /**
      * @brief Creates a new node with the desired id.
@@ -42,7 +42,7 @@ class NodeFactory {
      * @param node_id ID of the new node to create.
      * @return Pointer to the new node.
      */
-    Node * CreateNode(uint8_t node_id);
+    std::unique_ptr<Node> CreateNode(uint8_t node_id);
 
     /**
      * @brief Adds a new Canard transceiver to the list.
