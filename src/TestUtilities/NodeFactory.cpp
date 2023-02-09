@@ -11,6 +11,7 @@
 #include <string>
 
 #include "Node.h"
+#include "SocketCANTransceiver.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
 
@@ -62,13 +63,7 @@ std::unique_ptr<Node> NodeFactory::CreateNode(uint8_t node_id) {
         // Could be mitigated if transceiver is handed in via constructor.
     }
 
-    auto node = std::make_unique<Node>(node_id, *transceiver_[0], node_info);
-
-    for (int i = 1; i < CAN_REDUNDANCY_FACTOR; ++i) {
-        if (transceiver_[i] != nullptr) {
-            node->addTransceiver(*transceiver_[i]);
-        }
-    }
+    auto node = std::make_unique<Node>(node_id, std::move(std::make_unique<SocketCANTransceiver>(socket_can_interfaces_[0], true)), node_info);
 
     return node;
 }
@@ -90,12 +85,12 @@ void NodeFactory::GetUniqueID(uint8_t *out) {
     memcpy(&out[0], &value.unstructured.value, uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_);
 }
 
-void NodeFactory::AddTransceiver(CanardTransceiver &transceiver) {
-    for (auto & ifidx : transceiver_) {
-        if (ifidx == nullptr) {
-            ifidx = &transceiver;
-        }
-    }
+void NodeFactory::AddTransceiver(std::unique_ptr<CanardTransceiver> transceiver) {
+    transceiver_.push_back(std::move(transceiver));
+}
+
+void NodeFactory::AddSocketCanInterface(std::string socket_can_interface) {
+    socket_can_interfaces_.push_back(socket_can_interface);
 }
 
 

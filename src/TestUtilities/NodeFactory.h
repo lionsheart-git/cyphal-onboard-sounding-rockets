@@ -49,7 +49,9 @@ class NodeFactory {
      *
      * @param transceiver The new transceiver to add.
      */
-    void AddTransceiver(CanardTransceiver &transceiver);
+    void AddTransceiver(std::unique_ptr<CanardTransceiver> transceiver);
+
+    void AddSocketCanInterface(std::string socket_can_interface);
 
   private:
     /**
@@ -60,7 +62,8 @@ class NodeFactory {
     static void GetUniqueID(uint8_t out[16U]);
 
     std::vector<uint8_t> used_ids_; /**< List of already used node ids. */
-    CanardTransceiver *transceiver_[CAN_REDUNDANCY_FACTOR]{}; /**< Array of transceivers */
+    std::vector<std::unique_ptr<CanardTransceiver>> transceiver_;/**< Array of transceivers */
+    std::vector<std::string> socket_can_interfaces_;
 };
 
 #endif //SOCKETCAN_SRC_TESTUTILITIES_NODEFACTORY_H_
