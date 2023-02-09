@@ -85,8 +85,8 @@ int main() {
     // Now the node is initialized and we're ready to roll.
     auto started_at = Clock::GetMonotonicMicroseconds();
 
-    TByteArray byte_array(32, random_data, data_size, MEGA);
-    node.Schedule(byte_array);
+    auto byte_array = std::make_unique<TByteArray>(32, random_data, data_size, MEGA);
+    node.Schedule(std::move(byte_array));
 
     node.StartNode(started_at);
     node2.StartNode(started_at);

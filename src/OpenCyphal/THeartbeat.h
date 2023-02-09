@@ -26,6 +26,7 @@ class THeartbeat : public Task {
      * @param interval The interval the task should be run at.
      */
     THeartbeat(Node const & node, int64_t interval);
+    virtual ~THeartbeat() = default;
 
     /**
      * @copydoc Task::Interval()

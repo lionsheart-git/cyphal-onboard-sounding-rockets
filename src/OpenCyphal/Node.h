@@ -65,7 +65,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      * a custom next_run value set.
      * @param task Task to run.
      */
-    void Schedule(Task &task);
+    void Schedule(std::unique_ptr<Task> task);
 
     /**
      * @brief Sets the node to active.
@@ -124,7 +124,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
     uavcan_node_GetInfo_Response_1_0 ProcessRequestNodeGetInfo();
 
     std::vector<std::unique_ptr<SMessage>> subscribers_; /**< List of all subscribers. */
-    std::vector<Task*> schedule_; /**< Vector containing all tasks. */
+    std::vector<std::unique_ptr<Task>> schedule_; /**< Vector containing all tasks. */
     uavcan_node_GetInfo_Response_1_0 info_; /**< Information about this node */
     uint64_t started_at_; /**< Instant the node was started */
     bool online_; /**< Indicator if the node is active */

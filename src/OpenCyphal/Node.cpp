@@ -26,8 +26,8 @@ Node::Node(uint8_t node_id, CanardTransceiver &transceiver, uavcan_node_GetInfo_
 
     subscribers_.push_back(std::move(getInfo));
 
-    THeartbeat* heartbeat = new THeartbeat(*this, MEGA);
-    Schedule(*heartbeat);
+    auto heartbeat = std::make_unique<THeartbeat>(*this, MEGA);
+    Schedule(std::move(heartbeat));
 }
 
 void Node::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) {
@@ -72,7 +72,7 @@ uavcan_node_GetInfo_Response_1_0 Node::ProcessRequestNodeGetInfo() {
 
 void Node::CheckScheduler(CanardMicrosecond monotonic_time) {
     if (online_) {
-        for (Task *task : schedule_) {
+        for (auto & task : schedule_) {
             if (monotonic_time >= task->NextRun()) {
                 task->UpdateNextRun(monotonic_time);
                 task->Execute(*this, monotonic_time);
@@ -81,8 +81,8 @@ void Node::CheckScheduler(CanardMicrosecond monotonic_time) {
     }
 }
 
-void Node::Schedule(Task &task) {
-    schedule_.push_back(&task);
+void Node::Schedule(std::unique_ptr<Task> task) {
+    schedule_.push_back(std::move(task));
 }
 
 void Node::StartNode(uint64_t started_at) {

@@ -17,6 +17,9 @@
 class Task {
 
   public:
+
+    virtual ~Task() = default;
+
     /**
      * @brief Time the task has to be run again.
      *
