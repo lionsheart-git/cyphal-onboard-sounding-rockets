@@ -7,3 +7,6 @@
 [submodule "src/Lib/libcanard"]
 	path = src/Lib/libcanard
 	url = git@github.com:OpenCyphal/libcanard.git
+[submodule "src/Lib/googletest"]
+	path = src/Lib/googletest
+	url = git@github.com:google/googletest.git
