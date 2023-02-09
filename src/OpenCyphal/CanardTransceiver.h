@@ -19,6 +19,9 @@
 class CanardTransceiver {
 
   public:
+
+    virtual ~CanardTransceiver() = default;
+
     /**
      * @brief Sends a canard frame.
      *
