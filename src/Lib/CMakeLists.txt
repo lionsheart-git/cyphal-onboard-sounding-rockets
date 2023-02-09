@@ -16,3 +16,10 @@ add_library(Cyphal_DSDL cyphal_public_regulated_data_types_compiled)
 set_target_properties(Cyphal_DSDL PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(Cyphal_DSDL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cyphal_public_regulated_data_types_compiled)
+
+# GoogleTest
+add_subdirectory(googletest)
+add_library(GTest ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+target_link_libraries(GTest gtest gtest_main)
+
+target_include_directories(GTest PUBLIC ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
