@@ -37,15 +37,16 @@ static void getUniqueID(uint8_t out[uavcan_node_GetInfo_Response_1_0_unique_id_A
 
 int main() {
     // Init SocketCanTransceiver
-    SocketCANTransceiver transceiver("vcan0", true);
-    SocketCANTransceiver second_transceiver("vcan0", true);
-    SocketCANTransceiver third_transceiver("vcan0", true);
+    auto transceiver = std::make_unique<SocketCANTransceiver>("vcan0", true);
+    auto second_transceiver = std::make_unique<SocketCANTransceiver>("vcan0", true);
+    auto third_transceiver = std::make_unique<SocketCANTransceiver>("vcan0", true);
 
     uint8_t used_ids[] = {96};
     size_t used_ids_size = sizeof (used_ids);
 
     NodeFactory factory(used_ids, used_ids_size);
-    factory.AddTransceiver(third_transceiver);
+    factory.AddSocketCanInterface("vcan0");
+    factory.AddTransceiver(std::move(third_transceiver));
 
     uavcan_node_GetInfo_Response_1_0 node_info;
     node_info.name.count = strlen(NODE_NAME);
@@ -57,7 +58,7 @@ int main() {
 
     getUniqueID(node_info.unique_id);
 
-    Node node(NODE_ID, transceiver, node_info);
+    auto node = std::make_unique<Node>(NODE_ID, std::move(transceiver), node_info);
 
     size_t data_size = 256;
     int8_t random_data[256];
@@ -78,33 +79,37 @@ int main() {
     node_info2.software_vcs_revision_id = VCS_REVISION_ID;
 
     getUniqueID(node_info2.unique_id);
-    Node node2(67, second_transceiver, node_info2);
+    auto node2 = std::make_unique<Node>(67, std::move(second_transceiver), node_info2);
 
     auto node3 = factory.CreateNode(42);
+    auto node4 = factory.CreateNode(58);
 
     // Now the node is initialized and we're ready to roll.
     auto started_at = Clock::GetMonotonicMicroseconds();
 
     auto byte_array = std::make_unique<TByteArray>(32, random_data, data_size, MEGA);
-    node.Schedule(std::move(byte_array));
+    node->Schedule(std::move(byte_array));
 
-    node.StartNode(started_at);
-    node2.StartNode(started_at);
+    node->StartNode(started_at);
+    node2->StartNode(started_at);
     node3->StartNode(started_at);
+    node4->StartNode(started_at);
 
     while (true) {
 
         // Run a trivial scheduler polling the loops that run the business logic.
         CanardMicrosecond monotonic_time = Clock::GetMonotonicMicroseconds();
 
-        node.CheckScheduler(monotonic_time);
-        node2.CheckScheduler(monotonic_time);
+        node->CheckScheduler(monotonic_time);
+        node2->CheckScheduler(monotonic_time);
         node3->CheckScheduler(monotonic_time);
+        node4->CheckScheduler(monotonic_time);
 
         // Manage CAN RX/TX per redundant interface.
-        node.HandleTxRxQueues();
-        node2.HandleTxRxQueues();
+        node->HandleTxRxQueues();
+        node2->HandleTxRxQueues();
         node3->HandleTxRxQueues();
+        node4->HandleTxRxQueues();
 
         // Run every 5ms to prevent using too much CPU.
         usleep(TX_PROC_SLEEP_TIME);
