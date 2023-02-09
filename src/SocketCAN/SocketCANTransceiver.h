@@ -24,7 +24,8 @@
 
 class SocketCANTransceiver : public CanardTransceiver {
   public:
-    explicit SocketCANTransceiver(std::string ifrName, bool can_fd);
+    explicit SocketCANTransceiver(const std::string& ifrName, bool can_fd);
+    SocketCANTransceiver(const SocketCANTransceiver& other_transceiver);
     ~SocketCANTransceiver();
 
     int16_t SendCanardFrame(CanardFrame const &frame, uint64_t const &timeout_usec) const override;
@@ -43,6 +44,8 @@ class SocketCANTransceiver : public CanardTransceiver {
     void SendCANFrame(struct canfd_frame frame);
 
     int socket_;
+    std::string ifrName_;
+    bool can_fd_;
 
 };
 
