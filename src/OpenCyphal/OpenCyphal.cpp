@@ -10,7 +10,7 @@
 
 #include "Clock.h"
 
-OpenCyphal::OpenCyphal(uint8_t node_id, CanardTransceiver &transceiver)
+OpenCyphal::OpenCyphal(uint8_t node_id, std::unique_ptr<CanardTransceiver> transceiver)
     : o1heap_allocator_(),
     instance_(canardInit(&memAllocate, &memFree)), transfer_receiver_() {
 
@@ -19,7 +19,7 @@ OpenCyphal::OpenCyphal(uint8_t node_id, CanardTransceiver &transceiver)
     instance_.user_reference = o1heap_allocator_;
     instance_.node_id = node_id;
 
-    transceiver_[0] = &transceiver;
+    transceiver_[0] = std::move(transceiver);
     tx_queues_[0] = canardTxInit(100, CANARD_MTU_CAN_FD);
 }
 
@@ -63,10 +63,10 @@ int32_t OpenCyphal::Publish(CanardMicrosecond const tx_deadline_usec,
                         payload);;
 }
 
-void OpenCyphal::addTransceiver(CanardTransceiver &transceiver) {
+void OpenCyphal::addTransceiver(std::unique_ptr<CanardTransceiver> transceiver) {
     for (uint8_t ifidx = 0; ifidx < CAN_REDUNDANCY_FACTOR; ifidx++) {
         if (transceiver_[ifidx] == nullptr) {
-            transceiver_[ifidx] = &transceiver;
+            transceiver_[ifidx] = std::move(transceiver);
             tx_queues_[ifidx] = canardTxInit(100, CANARD_MTU_CAN_FD);
         }
     }
@@ -140,6 +140,7 @@ uint8_t OpenCyphal::Health() {
             return uavcan_node_Health_1_0_NOMINAL;
         }
 }
+
 void OpenCyphal::addTransferReceiver(CanardTransferReceiver &transfer_receiver) {
     transfer_receiver_.push_back(&transfer_receiver);
 }

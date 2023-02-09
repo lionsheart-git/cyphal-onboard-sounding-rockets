@@ -11,6 +11,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <vector>
+#include <memory>
 
 #include <canard.h>
 #include <o1heap.h>
@@ -30,7 +31,7 @@ class OpenCyphal {
      * @param node_id The id of this node.
      * @param transceiver The transceiver through which to communicate.
      */
-    explicit OpenCyphal(uint8_t node_id, CanardTransceiver &transceiver);
+    OpenCyphal(uint8_t node_id, std::unique_ptr<CanardTransceiver> transceiver);
 
     /**
      * @brief Subscribes to a specific topic.
@@ -96,7 +97,7 @@ class OpenCyphal {
      *
      * @param transceiver The transceiver to add.
      */
-    void addTransceiver(CanardTransceiver &transceiver);
+    void addTransceiver(std::unique_ptr<CanardTransceiver> transceiver);
 
     /**
      * @brief Adds a new handler for received transfers.
@@ -116,7 +117,7 @@ class OpenCyphal {
   private:
     // Canard variables
     CanardTxQueue tx_queues_[CAN_REDUNDANCY_FACTOR]; /**< Transmission queue for each receiver */
-    CanardTransceiver *transceiver_[CAN_REDUNDANCY_FACTOR]; /**< Transceiver of this canard instance */
+    std::unique_ptr<CanardTransceiver> transceiver_[CAN_REDUNDANCY_FACTOR]; /**< Transceiver of this canard instance */
     CanardInstance instance_; /**< Canard instance */
 
     // O1Heap variables
