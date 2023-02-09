@@ -14,7 +14,7 @@ OpenCyphal::OpenCyphal(uint8_t node_id, std::unique_ptr<CanardTransceiver> trans
     : o1heap_allocator_(),
     instance_(canardInit(&memAllocate, &memFree)), transfer_receiver_() {
 
-    o1heap_allocator_ = o1heapInit(heap_arena, sizeof(heap_arena));
+    o1heap_allocator_ = o1heapInit(heap_arena.data(), sizeof(heap_arena));
 
     instance_.user_reference = o1heap_allocator_;
     instance_.node_id = node_id;

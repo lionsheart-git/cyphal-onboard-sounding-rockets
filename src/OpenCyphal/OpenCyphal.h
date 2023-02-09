@@ -122,7 +122,7 @@ class OpenCyphal {
 
     // O1Heap variables
     O1HeapInstance *o1heap_allocator_; /**< O1Heap instance for cyphal to allocate memory */
-    alignas(O1HEAP_ALIGNMENT) uint8_t heap_arena[O1HEAP_MEM_SIZE] = {0}; /**< Memory space for O1Heap toa allocate in */
+    alignas(O1HEAP_ALIGNMENT) std::array<std::byte, O1HEAP_MEM_SIZE> heap_arena = {}; /**< Memory space for O1Heap to allocate in */
 
     std::vector<CanardTransferReceiver *> transfer_receiver_; /**< Nodes that handle received transfers */
 
