@@ -20,7 +20,7 @@
 #endif
 
 #ifndef O1HEAP_MEM_SiZE
-#define O1HEAP_MEM_SIZE 4096
+#define O1HEAP_MEM_SIZE 2048U
 #endif
 
 #ifndef NODE_ID
