@@ -23,7 +23,7 @@ SocketCANTransceiver::SocketCANTransceiver(SocketCANTransceiver const &other_tra
 }
 
 SocketCANTransceiver::~SocketCANTransceiver() {
-    if (close(socket_ < 0)) {
+    if (close(socket_) < 0) {
         perror("Close");
     }
 }
