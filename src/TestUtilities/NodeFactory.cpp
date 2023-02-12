@@ -58,10 +58,10 @@ std::unique_ptr<Node> NodeFactory::CreateNode(uint8_t node_id) {
 
     GetUniqueID(node_info.unique_id);
 
-    if (transceiver_[0] == nullptr) {
-        //@todo Figure out what happens if no transceiver present.
-        // Could be mitigated if transceiver is handed in via constructor.
-    }
+//    if (transceiver_[0] == nullptr && socket_can_interfaces_.empty()) {
+//        //@todo Figure out what happens if no transceiver present.
+//        // Could be mitigated if transceiver is handed in via constructor.
+//    }
 
     auto node = std::make_unique<Node>(node_id, std::move(std::make_unique<SocketCANTransceiver>(socket_can_interfaces_[0], true)), node_info);
 
