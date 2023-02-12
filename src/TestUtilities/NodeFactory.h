@@ -21,6 +21,12 @@
  */
 class NodeFactory {
   public:
+
+    /**
+     * @brief Node factory with all node ids available.
+     */
+    NodeFactory() = default;
+
     /**
      * @brief Creates a new node factory.
      *
