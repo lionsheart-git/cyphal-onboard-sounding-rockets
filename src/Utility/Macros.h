@@ -27,4 +27,8 @@
 #define NODE_ID 96
 #endif
 
+#ifndef TX_PROC_SLEEP_TIME
+#define TX_PROC_SLEEP_TIME 5000
+#endif
+
 #endif //SOCKETCAN_SRC_UTILITY_MACROS_H_
