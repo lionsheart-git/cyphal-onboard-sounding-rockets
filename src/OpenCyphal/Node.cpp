@@ -10,6 +10,7 @@
 #include "Task.h"
 #include "SMessageGetInfo.h"
 #include "THeartbeat.h"
+#include "PUavcanPrimitiveEmpty.h"
 
 Node::Node(uint8_t node_id, std::unique_ptr<CanardTransceiver> transceiver, uavcan_node_GetInfo_Response_1_0 info)
     : OpenCyphal(node_id, std::move(transceiver)), info_(info), started_at_() {
@@ -45,6 +46,18 @@ void Node::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer con
             } else {
                 assert(false);
             }
+        }
+        else if (transfer.metadata.port_id == LATENCY_MEASUREMENT_PORT_ID) {
+            CanardTransferMetadata meta = transfer.metadata;
+            meta.transfer_kind = CanardTransferKindResponse;
+
+            PUavcanPrimitiveEmpty answer(meta);
+            Publish(transfer.timestamp_usec + MEGA, answer);
+        }
+    }
+    else if (transfer.metadata.transfer_kind == CanardTransferKindResponse) {
+        if (transfer.metadata.port_id == LATENCY_MEASUREMENT_PORT_ID) {
+
         }
     }
 }
