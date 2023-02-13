@@ -1,5 +1,5 @@
 add_library(TestUtilities
-        NodeFactory.h NodeFactory.cpp)
+        NodeFactory.h NodeFactory.cpp LatencyMeasurementNode.cpp LatencyMeasurementNode.h)
 
 target_include_directories(TestUtilities PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
