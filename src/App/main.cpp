@@ -12,6 +12,7 @@
 #include "SMessageGetInfo.h"
 #include "TByteArray.h"
 #include "NodeFactory.h"
+#include "TPrimitiveEmpty.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
 
@@ -81,11 +82,14 @@ int main() {
     auto node3 = factory.CreateNode(42);
     auto node4 = factory.CreateNode(58);
 
-    // Now the node is initialized and we're ready to roll.
-    auto started_at = Clock::GetMonotonicMicroseconds();
-
     auto byte_array = std::make_unique<TByteArray>(32, random_data, data_size, MEGA);
     node->Schedule(std::move(byte_array));
+
+    auto primitive_empty = std::make_unique<TPrimitiveEmpty>(LATENCY_MEASUREMENT_PORT_ID, CANARD_NODE_ID_UNSET, MEGA / 2);
+    node4->Schedule(std::move(primitive_empty));
+
+    // Now the node is initialized and we're ready to roll.
+    auto started_at = Clock::GetMonotonicMicroseconds();
 
     node->StartNode(started_at);
     node2->StartNode(started_at);
