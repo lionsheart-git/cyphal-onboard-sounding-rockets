@@ -11,7 +11,11 @@ add_library(OpenCyphal
         SMessage.cpp SMessage.h
         SMessageGetInfo.h SMessageGetInfo.cpp
         PMessageByteArray.cpp PMessageByteArray.h
-        TByteArray.cpp TByteArray.h PUavcanPrimitiveEmpty.cpp PUavcanPrimitiveEmpty.h TPrimitiveEmpty.cpp TPrimitiveEmpty.h)
+        TByteArray.cpp TByteArray.h
+        PUavcanPrimitiveEmpty.cpp PUavcanPrimitiveEmpty.h
+        TPrimitiveEmpty.cpp TPrimitiveEmpty.h
+        SRequestPrimitiveEmpty.cpp SRequestPrimitiveEmpty.h
+        SResponsePrimitiveEmpty.cpp SResponsePrimitiveEmpty.h)
 
 target_include_directories(OpenCyphal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
