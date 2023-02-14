@@ -19,13 +19,11 @@ Node::Node(uint8_t node_id, std::unique_ptr<CanardTransceiver> transceiver, uavc
     //@todo Fix all this creation of pointers.
     // Subscribe to GetInfo requests
     std::unique_ptr<SMessageGetInfo> getInfo = std::make_unique<SMessageGetInfo>();
-    const int8_t res = Subscribe(*getInfo);
+    const int8_t res = Subscribe(std::move(getInfo));
     if (res < 0) {
         //@todo Throw some kind of exception.
         // return -res;
     }
-
-    subscribers_.push_back(std::move(getInfo));
 
     auto heartbeat = std::make_unique<THeartbeat>(*this, MEGA);
     Schedule(std::move(heartbeat));
@@ -46,18 +44,6 @@ void Node::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer con
             } else {
                 assert(false);
             }
-        }
-        else if (transfer.metadata.port_id == LATENCY_MEASUREMENT_PORT_ID) {
-            CanardTransferMetadata meta = transfer.metadata;
-            meta.transfer_kind = CanardTransferKindResponse;
-
-            PUavcanPrimitiveEmpty answer(meta);
-            Publish(transfer.timestamp_usec + MEGA, answer);
-        }
-    }
-    else if (transfer.metadata.transfer_kind == CanardTransferKindResponse) {
-        if (transfer.metadata.port_id == LATENCY_MEASUREMENT_PORT_ID) {
-
         }
     }
 }
@@ -107,12 +93,17 @@ uint8_t Node::Health() {
     return OpenCyphal::Health();
 }
 
-int8_t Node::Subscribe(SMessage &message) {
-    return OpenCyphal::Subscribe(message.TransferKind(),
-                      message.PortID(),
-                      message.Extent(),
-                      message.TransferIDTimeout(),
-                      message.Subscription());
+int8_t Node::Subscribe(std::unique_ptr<SMessage> message) {
+
+    int8_t const res = OpenCyphal::Subscribe(message->TransferKind(),
+                      message->PortID(),
+                      message->Extent(),
+                      message->TransferIDTimeout(),
+                      message->Subscription());
+
+    subscribers_.push_back(std::move(message));
+
+    return res;
 
 }
 

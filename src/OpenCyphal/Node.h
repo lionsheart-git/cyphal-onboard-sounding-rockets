@@ -82,7 +82,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      * @retval 0 Subscription already existed. Existing subscription is terminated and then a new one is created in its place.
      * @retval Negative Negated errno like invalid arguments.
      */
-    int8_t Subscribe(SMessage & message);
+    int8_t Subscribe(std::unique_ptr<SMessage> message);
 
     /**
      * @brief Publishes a new message.
