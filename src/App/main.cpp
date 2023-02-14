@@ -13,6 +13,9 @@
 #include "TByteArray.h"
 #include "NodeFactory.h"
 #include "TPrimitiveEmpty.h"
+#include "LatencyMeasurementNode.h"
+#include "SRequestPrimitiveEmpty.h"
+#include "SResponsePrimitiveEmpty.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
 
@@ -44,11 +47,13 @@ int main() {
 
     NodeFactory factory(used_ids, used_ids_size);
     factory.AddSocketCanInterface("vcan0");
-    factory.AddTransceiver(std::move(third_transceiver));
 
     uavcan_node_GetInfo_Response_1_0 node_info;
-    node_info.name.count = strlen(NODE_NAME);
-    memcpy(&node_info.name.elements, NODE_NAME, node_info.name.count);
+
+    std::string name("org.icarus.latency.1");
+
+    node_info.name.count = name.size();
+    memcpy(&node_info.name.elements, name.c_str(), node_info.name.count);
 
     node_info.software_version.major = VERSION_MAJOR;
     node_info.software_version.minor = VERSION_MINOR;
@@ -56,45 +61,52 @@ int main() {
 
     getUniqueID(node_info.unique_id);
 
-    auto node = std::make_unique<Node>(NODE_ID, std::move(transceiver), node_info);
+    auto node = std::make_unique<LatencyMeasurementNode>(NODE_ID, std::move(transceiver), node_info);
 
-    size_t data_size = 256;
-    int8_t random_data[256];
-
-    for (int8_t i = 0; i < data_size; ++i) {
-        random_data[i] = i;
-    }
+    auto latency_response = std::make_unique<SResponsePrimitiveEmpty>();
+    node->Subscribe(std::move(latency_response));
 
     uavcan_node_GetInfo_Response_1_0 node_info2;
 
-    std::string name("org.icarus.nodefactory.67");
+    std::string name2("org.icarus.latency.2");
 
-    node_info2.name.count = name.size();
-    memcpy(&node_info2.name.elements, name.c_str(), node_info2.name.count);
+    node_info2.name.count = name2.size();
+    memcpy(&node_info2.name.elements, name2.c_str(), node_info2.name.count);
 
     node_info2.software_version.major = VERSION_MAJOR;
     node_info2.software_version.minor = VERSION_MINOR;
     node_info2.software_vcs_revision_id = VCS_REVISION_ID;
 
     getUniqueID(node_info2.unique_id);
-    auto node2 = std::make_unique<Node>(67, std::move(second_transceiver), node_info2);
+    auto node2 = std::make_unique<LatencyMeasurementNode>(67, std::move(second_transceiver), node_info2);
 
-    auto node3 = factory.CreateNode(42);
-    auto node4 = factory.CreateNode(58);
+    auto latency_request = std::make_unique<SRequestPrimitiveEmpty>();
+    node2->Subscribe(std::move(latency_request));
 
-    auto byte_array = std::make_unique<TByteArray>(32, random_data, data_size, MEGA);
-    node->Schedule(std::move(byte_array));
+//     auto node3 = factory.CreateNode(42);
+//    auto node4 = factory.CreateNode(58);
 
-    auto primitive_empty = std::make_unique<TPrimitiveEmpty>(LATENCY_MEASUREMENT_PORT_ID, CANARD_NODE_ID_UNSET, MEGA / 2);
-    node4->Schedule(std::move(primitive_empty));
+
+//    size_t data_size = 256;
+//    int8_t random_data[256];
+//
+//    for (int8_t i = 0; i < data_size; ++i) {
+//        random_data[i] = i;
+//    }
+//
+//    auto byte_array = std::make_unique<TByteArray>(32, random_data, data_size, MEGA);
+//    node->Schedule(std::move(byte_array));
+
+    auto primitive_empty = std::make_unique<TPrimitiveEmpty>(LATENCY_MEASUREMENT_PORT_ID, 67, MEGA / 2);
+    node->Schedule(std::move(primitive_empty));
 
     // Now the node is initialized and we're ready to roll.
     auto started_at = Clock::GetMonotonicMicroseconds();
 
     node->StartNode(started_at);
     node2->StartNode(started_at);
-    node3->StartNode(started_at);
-    node4->StartNode(started_at);
+//    node3->StartNode(started_at);
+//    node4->StartNode(started_at);
 
     while (true) {
 
@@ -103,14 +115,14 @@ int main() {
 
         node->CheckScheduler(monotonic_time);
         node2->CheckScheduler(monotonic_time);
-        node3->CheckScheduler(monotonic_time);
-        node4->CheckScheduler(monotonic_time);
+//        node3->CheckScheduler(monotonic_time);
+//        node4->CheckScheduler(monotonic_time);
 
         // Manage CAN RX/TX per redundant interface.
         node->HandleTxRxQueues();
         node2->HandleTxRxQueues();
-        node3->HandleTxRxQueues();
-        node4->HandleTxRxQueues();
+//        node3->HandleTxRxQueues();
+//        node4->HandleTxRxQueues();
 
         // Run every 5ms to prevent using too much CPU.
         usleep(TX_PROC_SLEEP_TIME);
