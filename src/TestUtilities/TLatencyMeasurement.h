@@ -11,11 +11,11 @@
 
 #include "PUavcanPrimitiveEmpty.h"
 
-class TPrimitiveEmpty : public Task {
+class TLatencyMeasurement : public Task {
 
   public:
 
-    TPrimitiveEmpty(CanardPortID port_id, CanardNodeID target, uint64_t interval);
+    TLatencyMeasurement(CanardPortID port_id, CanardNodeID target, uint64_t interval);
 
     uint64_t Interval() const override;
     void Execute(Node &node, uint64_t current_time) override;

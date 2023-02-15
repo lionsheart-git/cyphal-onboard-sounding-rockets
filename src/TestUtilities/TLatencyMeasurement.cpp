@@ -4,16 +4,16 @@
  * @date 12.02.23
 */
 
-#include "TPrimitiveEmpty.h"
+#include "TLatencyMeasurement.h"
 
 #include "LatencyMeasurementNode.h"
 #include "Clock.h"
 
-uint64_t TPrimitiveEmpty::Interval() const {
+uint64_t TLatencyMeasurement::Interval() const {
     return interval_;
 }
 
-void TPrimitiveEmpty::Execute(Node &node, uint64_t current_time) {
+void TLatencyMeasurement::Execute(Node &node, uint64_t current_time) {
 
     //@todo Remove cast need for latency measurement
     auto & latency_node =  dynamic_cast<LatencyMeasurementNode&>(node);
@@ -23,7 +23,7 @@ void TPrimitiveEmpty::Execute(Node &node, uint64_t current_time) {
     node.Publish(current_time + Interval() - 1, primitive_empty_);
 }
 
-TPrimitiveEmpty::TPrimitiveEmpty(CanardPortID port_id, CanardNodeID target, uint64_t interval)
+TLatencyMeasurement::TLatencyMeasurement(CanardPortID port_id, CanardNodeID target, uint64_t interval)
 : primitive_empty_(port_id, target), interval_(interval) {
 
 }

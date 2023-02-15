@@ -13,7 +13,6 @@ add_library(OpenCyphal
         PMessageByteArray.cpp PMessageByteArray.h
         TByteArray.cpp TByteArray.h
         PUavcanPrimitiveEmpty.cpp PUavcanPrimitiveEmpty.h
-        TPrimitiveEmpty.cpp TPrimitiveEmpty.h
         SRequestPrimitiveEmpty.cpp SRequestPrimitiveEmpty.h
         SResponsePrimitiveEmpty.cpp SResponsePrimitiveEmpty.h)
 

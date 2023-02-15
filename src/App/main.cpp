@@ -12,7 +12,7 @@
 #include "SMessageGetInfo.h"
 #include "TByteArray.h"
 #include "NodeFactory.h"
-#include "TPrimitiveEmpty.h"
+#include "TLatencyMeasurement.h"
 #include "LatencyMeasurementNode.h"
 #include "SRequestPrimitiveEmpty.h"
 #include "SResponsePrimitiveEmpty.h"
@@ -97,7 +97,7 @@ int main() {
 //    auto byte_array = std::make_unique<TByteArray>(32, random_data, data_size, MEGA);
 //    node->Schedule(std::move(byte_array));
 
-    auto primitive_empty = std::make_unique<TPrimitiveEmpty>(LATENCY_MEASUREMENT_PORT_ID, 67, MEGA / 2);
+    auto primitive_empty = std::make_unique<TLatencyMeasurement>(LATENCY_MEASUREMENT_PORT_ID, 67, MEGA / 2);
     node->Schedule(std::move(primitive_empty));
 
     // Now the node is initialized and we're ready to roll.
