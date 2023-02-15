@@ -15,7 +15,7 @@ class PUavcanPrimitiveEmpty : public IPMessage{
   public:
 
     PUavcanPrimitiveEmpty(CanardPortID port_id, CanardNodeID target);
-    PUavcanPrimitiveEmpty(CanardTransferMetadata metadata);
+    explicit PUavcanPrimitiveEmpty(CanardTransferMetadata metadata);
 
     CanardTransferMetadata Metadata() override;
     uint8_t *SerializedMessage() override;

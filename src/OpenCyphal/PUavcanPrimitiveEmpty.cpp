@@ -21,12 +21,12 @@ PUavcanPrimitiveEmpty::PUavcanPrimitiveEmpty(CanardTransferMetadata metadata)
 }
 
 CanardTransferMetadata PUavcanPrimitiveEmpty::Metadata() {
-    metadata_.transfer_id++;
-
     return metadata_;
 }
 
 uint8_t *PUavcanPrimitiveEmpty::SerializedMessage() {
+
+    metadata_.transfer_id++;
 
     uavcan_primitive_Empty_1_0 primitive_empty;
 
