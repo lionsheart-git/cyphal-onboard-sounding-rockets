@@ -7,7 +7,7 @@
 #ifndef SOCKETCAN_SRC_TESTUTILITIES_LATENCYMEASUREMENTNODE_H_
 #define SOCKETCAN_SRC_TESTUTILITIES_LATENCYMEASUREMENTNODE_H_
 
-#include <unordered_map>
+#include <array>
 
 #include "Node.h"
 
@@ -19,8 +19,7 @@ class LatencyMeasurementNode : public Node {
 
     void ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) override;
 
-  private:
-    std::unordered_map<int, uint64_t> latency_;
+    std::array<uint64_t, 32> latency_;
 
 };
 

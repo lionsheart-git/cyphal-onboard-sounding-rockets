@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "PUavcanPrimitiveEmpty.h"
+#include "Clock.h"
 
 void LatencyMeasurementNode::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) {
     Node::ProcessReceivedTransfer(interface_index, transfer);
@@ -28,8 +29,10 @@ void LatencyMeasurementNode::ProcessReceivedTransfer(uint8_t interface_index, Ca
     }
     if (transfer.metadata.transfer_kind == CanardTransferKindResponse) {
         if (transfer.metadata.port_id == LATENCY_MEASUREMENT_PORT_ID) {
+            auto delta = Clock::GetMonotonicMicroseconds() - latency_[transfer.metadata.transfer_id];
+
             std::cout << "Got latency response from " << static_cast<int>(transfer.metadata.remote_node_id) <<
-                      " with transmission id" << static_cast<int>(transfer.metadata.transfer_id) << std::endl;
+                      " with transmission id " << static_cast<int>(transfer.metadata.transfer_id) << " after " << delta << " microseconds." << std::endl;
         }
     }
 }
