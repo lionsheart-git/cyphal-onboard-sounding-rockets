@@ -112,7 +112,7 @@ class OpenCyphal {
      * This function has to be called continuously to publish data and messages and answer to requests.
      * @return Negative errno on error.
      */
-    int32_t HandleTxRxQueues();
+    int32_t HandleTxRxQueues(uint64_t monotonic_time);
 
   private:
     // Canard variables
