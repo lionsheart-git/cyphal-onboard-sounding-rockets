@@ -8,11 +8,12 @@
 
 #include <cstdlib>
 #include <ctime>
+#include <chrono>
 
 uint64_t Clock::GetMonotonicMicroseconds() {
-    struct timespec ts;
-    if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
-        abort();
-    }
-    return (uint64_t) (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
+    uint64_t us = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::high_resolution_clock ::now().time_since_epoch())
+        .count();
+
+    return us;
 }
