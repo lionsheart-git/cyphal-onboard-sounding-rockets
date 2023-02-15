@@ -119,8 +119,8 @@ int main() {
 //        node4->CheckScheduler(monotonic_time);
 
         // Manage CAN RX/TX per redundant interface.
-        node->HandleTxRxQueues();
-        node2->HandleTxRxQueues();
+        node->HandleTxRxQueues(monotonic_time);
+        node2->HandleTxRxQueues(monotonic_time);
 //        node3->HandleTxRxQueues();
 //        node4->HandleTxRxQueues();
 
