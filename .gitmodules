@@ -10,3 +10,9 @@
 [submodule "src/Lib/googletest"]
 	path = src/Lib/googletest
 	url = git@github.com:google/googletest.git
+[submodule "src/Lib/benchmark"]
+	path = src/Lib/benchmark
+	url = git@github.com:google/benchmark.git
+[submodule "src/Lib/glog"]
+	path = src/Lib/glog
+	url = git@github.com:google/glog.git

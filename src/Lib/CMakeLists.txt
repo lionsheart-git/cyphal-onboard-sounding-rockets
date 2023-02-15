@@ -21,5 +21,12 @@ target_include_directories(Cyphal_DSDL PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cyphal
 add_subdirectory(googletest)
 add_library(GTest ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 target_link_libraries(GTest gtest gtest_main)
+set_target_properties(GTest PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(GTest PUBLIC ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+# Google Benchmark
+add_subdirectory(benchmark)
+
+# Glog
+add_subdirectory(glog)
