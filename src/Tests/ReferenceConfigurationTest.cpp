@@ -41,10 +41,10 @@ void ReferenceConfigurationTest::HandleLoop() {
     payload_->CheckScheduler(monotonic_time);
 
     // Manage CAN RX/TX per redundant interface.
-    flight_computer_->HandleTxRxQueues();
-    telemetry_->HandleTxRxQueues();
-    sensors_->HandleTxRxQueues();
-    payload_->HandleTxRxQueues();
+    flight_computer_->HandleTxRxQueues(monotonic_time);
+    telemetry_->HandleTxRxQueues(monotonic_time);
+    sensors_->HandleTxRxQueues(monotonic_time);
+    payload_->HandleTxRxQueues(monotonic_time);
 
     // Run every 5ms to prevent using too much CPU.
     usleep(TX_PROC_SLEEP_TIME);
