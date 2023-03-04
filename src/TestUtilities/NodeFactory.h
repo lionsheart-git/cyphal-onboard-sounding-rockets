@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "Node.h"
+#include "LatencyMeasurementNode.h"
 #include "CanardTransceiver.h"
 #include "Macros.h"
 
@@ -49,6 +50,8 @@ class NodeFactory {
      * @return Pointer to the new node.
      */
     std::unique_ptr<Node> CreateNode(uint8_t node_id);
+
+    std::unique_ptr<LatencyMeasurementNode> CreateLatencyNode(uint8_t node_id);
 
     /**
      * @brief Adds a new Canard transceiver to the list.

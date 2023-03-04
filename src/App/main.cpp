@@ -3,6 +3,8 @@
 #include <cstring>
 #include <unistd.h>
 
+#include <glog/logging.h>
+
 #include "SocketCANTransceiver.h"
 #include "OpenCyphal.h"
 #include "Node.h"
@@ -36,52 +38,17 @@ static void getUniqueID(uint8_t out[uavcan_node_GetInfo_Response_1_0_unique_id_A
     memcpy(&out[0], &value.unstructured.value, uavcan_node_GetInfo_Response_1_0_unique_id_ARRAY_CAPACITY_);
 }
 
-int main() {
-    // Init SocketCanTransceiver
-    auto transceiver = std::make_unique<SocketCANTransceiver>("vcan0", true);
-    auto second_transceiver = std::make_unique<SocketCANTransceiver>("vcan0", true);
-    auto third_transceiver = std::make_unique<SocketCANTransceiver>("vcan0", true);
+int main(int argc, char *argv[]) {
+    google::InitGoogleLogging(argv[0]);
+    FLAGS_alsologtostderr = 1;
+    FLAGS_log_dir = LOG_PATH;
 
-    uint8_t used_ids[] = {96};
-    size_t used_ids_size = sizeof (used_ids);
-
-    NodeFactory factory(used_ids, used_ids_size);
+    NodeFactory factory;
     factory.AddSocketCanInterface("vcan0");
 
-    uavcan_node_GetInfo_Response_1_0 node_info;
+    auto node = factory.CreateLatencyNode(NODE_ID);
 
-    std::string name("org.icarus.latency.1");
-
-    node_info.name.count = name.size();
-    memcpy(&node_info.name.elements, name.c_str(), node_info.name.count);
-
-    node_info.software_version.major = VERSION_MAJOR;
-    node_info.software_version.minor = VERSION_MINOR;
-    node_info.software_vcs_revision_id = VCS_REVISION_ID;
-
-    getUniqueID(node_info.unique_id);
-
-    auto node = std::make_unique<LatencyMeasurementNode>(NODE_ID, std::move(transceiver), node_info);
-
-    auto latency_response = std::make_unique<SResponsePrimitiveEmpty>();
-    node->Subscribe(std::move(latency_response));
-
-    uavcan_node_GetInfo_Response_1_0 node_info2;
-
-    std::string name2("org.icarus.latency.2");
-
-    node_info2.name.count = name2.size();
-    memcpy(&node_info2.name.elements, name2.c_str(), node_info2.name.count);
-
-    node_info2.software_version.major = VERSION_MAJOR;
-    node_info2.software_version.minor = VERSION_MINOR;
-    node_info2.software_vcs_revision_id = VCS_REVISION_ID;
-
-    getUniqueID(node_info2.unique_id);
-    auto node2 = std::make_unique<LatencyMeasurementNode>(67, std::move(second_transceiver), node_info2);
-
-    auto latency_request = std::make_unique<SRequestPrimitiveEmpty>();
-    node2->Subscribe(std::move(latency_request));
+    auto node2 = factory.CreateLatencyNode(67);
 
 //     auto node3 = factory.CreateNode(42);
 //    auto node4 = factory.CreateNode(58);

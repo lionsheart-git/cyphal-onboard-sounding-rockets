@@ -14,6 +14,8 @@
 #include "SocketCANTransceiver.h"
 
 #include "uavcan/node/GetInfo_1_0.h"
+#include "SResponsePrimitiveEmpty.h"
+#include "SRequestPrimitiveEmpty.h"
 
 NodeFactory::NodeFactory(uint8_t *used_ids, size_t size) {
     for (int i = 0; i < size; ++i) {
@@ -91,6 +93,34 @@ void NodeFactory::AddTransceiver(std::unique_ptr<CanardTransceiver> transceiver)
 
 void NodeFactory::AddSocketCanInterface(std::string socket_can_interface) {
     socket_can_interfaces_.push_back(socket_can_interface);
+}
+
+std::unique_ptr<LatencyMeasurementNode> NodeFactory::CreateLatencyNode(uint8_t node_id) {
+    used_ids_.push_back(node_id);
+
+    uavcan_node_GetInfo_Response_1_0 node_info;
+
+    std::string name("org.icarus.latency.");
+    name.append(std::to_string(node_id));
+
+    node_info.name.count = name.size();
+    memcpy(&node_info.name.elements, name.c_str(), node_info.name.count);
+
+    node_info.software_version.major = VERSION_MAJOR;
+    node_info.software_version.minor = VERSION_MINOR;
+    node_info.software_vcs_revision_id = VCS_REVISION_ID;
+
+    GetUniqueID(node_info.unique_id);
+
+    auto node = std::make_unique<LatencyMeasurementNode>(node_id, std::move(std::make_unique<SocketCANTransceiver>(socket_can_interfaces_[0], true)), node_info);
+
+    auto latency_response = std::make_unique<SResponsePrimitiveEmpty>();
+    node->Subscribe(std::move(latency_response));
+
+    auto latency_request = std::make_unique<SRequestPrimitiveEmpty>();
+    node->Subscribe(std::move(latency_request));
+
+    return node;
 }
 
 
