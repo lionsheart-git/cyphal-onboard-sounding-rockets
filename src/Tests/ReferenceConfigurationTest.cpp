@@ -59,20 +59,3 @@ void ReferenceConfigurationTest::WarmUp(float seconds) {
     }
 
 }
-
-TEST_F(ReferenceConfigurationTest, VariablesNotNullpointers) {
-    ASSERT_NE(flight_computer_, nullptr);
-    ASSERT_NE(telemetry_, nullptr);
-    ASSERT_NE(sensors_, nullptr);
-    ASSERT_NE(payload_, nullptr);
-}
-
-TEST_F(ReferenceConfigurationTest, GetInfoRequests) {
-
-    WarmUp();
-
-    ASSERT_NE(flight_computer_, nullptr);
-    ASSERT_NE(telemetry_, nullptr);
-    ASSERT_NE(sensors_, nullptr);
-    ASSERT_NE(payload_, nullptr);
-}

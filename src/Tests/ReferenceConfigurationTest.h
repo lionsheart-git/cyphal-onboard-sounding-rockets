@@ -8,6 +8,7 @@
 #define SOCKETCAN_SRC_TESTS_REFERENCECONFIGURATIONTEST_H_
 
 #include <gtest/gtest.h>
+#include <glog/logging.h>
 
 #include "Node.h"
 #include "NodeFactory.h"
@@ -30,5 +31,23 @@ class ReferenceConfigurationTest : public ::testing::Test {
     std::unique_ptr<Node> payload_;
 
 };
+
+
+TEST_F(ReferenceConfigurationTest, VariablesNotNullpointers) {
+    ASSERT_NE(flight_computer_, nullptr);
+    ASSERT_NE(telemetry_, nullptr);
+    ASSERT_NE(sensors_, nullptr);
+    ASSERT_NE(payload_, nullptr);
+}
+
+TEST_F(ReferenceConfigurationTest, GetInfoRequests) {
+
+    WarmUp();
+
+    ASSERT_NE(flight_computer_, nullptr);
+    ASSERT_NE(telemetry_, nullptr);
+    ASSERT_NE(sensors_, nullptr);
+    ASSERT_NE(payload_, nullptr);
+}
 
 #endif //SOCKETCAN_SRC_TESTS_REFERENCECONFIGURATIONTEST_H_
