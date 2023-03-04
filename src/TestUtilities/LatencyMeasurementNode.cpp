@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+#include <glog/logging.h>
+
 #include "PUavcanPrimitiveEmpty.h"
 #include "Clock.h"
 
@@ -23,16 +25,16 @@ void LatencyMeasurementNode::ProcessReceivedTransfer(uint8_t interface_index, Ca
             OpenCyphal::Publish(transfer.timestamp_usec + MEGA, &meta, answer.SerializedSize(), answer.SerializedMessage(), interface_index);
             // Publish(interface_index, transfer.timestamp_usec + MEGA, answer);
         } else if (transfer.metadata.port_id == LATENCY_MEASUREMENT_PORT_ID + 1) {
-            std::cout << "Got latency response from " << transfer.metadata.remote_node_id <<
-                      " with transmission id" << transfer.metadata.transfer_id << std::endl;
+            LOG(INFO) << "Got latency response from " << transfer.metadata.remote_node_id <<
+                      " with transmission id" << transfer.metadata.transfer_id;
         }
     }
     if (transfer.metadata.transfer_kind == CanardTransferKindResponse) {
         if (transfer.metadata.port_id == LATENCY_MEASUREMENT_PORT_ID) {
             auto delta = Clock::GetMonotonicMicroseconds() - latency_[transfer.metadata.transfer_id];
 
-            std::cout << "Got latency response from " << static_cast<int>(transfer.metadata.remote_node_id) <<
-                      " with transmission id " << static_cast<int>(transfer.metadata.transfer_id) << " after " << delta << " microseconds." << std::endl;
+            LOG(INFO) << ";" << static_cast<int>(transfer.metadata.remote_node_id) <<
+                      ";" << static_cast<int>(transfer.metadata.transfer_id) << ";" << delta;
         }
     }
 }
