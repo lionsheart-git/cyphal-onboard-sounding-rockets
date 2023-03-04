@@ -16,6 +16,7 @@
 #include "uavcan/node/GetInfo_1_0.h"
 #include "SResponsePrimitiveEmpty.h"
 #include "SRequestPrimitiveEmpty.h"
+#include "TLatencyMeasurement.h"
 
 NodeFactory::NodeFactory(uint8_t *used_ids, size_t size) {
     for (int i = 0; i < size; ++i) {
@@ -95,6 +96,19 @@ void NodeFactory::AddSocketCanInterface(std::string socket_can_interface) {
     socket_can_interfaces_.push_back(socket_can_interface);
 }
 
+std::unique_ptr<LatencyMeasurementNode> NodeFactory::CreateLatencyRequestNode(uint8_t node_id) {
+
+    auto node = CreateLatencyNode(node_id);
+
+    auto latency_response = std::make_unique<SResponsePrimitiveEmpty>();
+    node->Subscribe(std::move(latency_response));
+
+    auto primitive_empty = std::make_unique<TLatencyMeasurement>(LATENCY_MEASUREMENT_PORT_ID, 2, MEGA / 2);
+    node->Schedule(std::move(primitive_empty));
+
+    return node;
+}
+
 std::unique_ptr<LatencyMeasurementNode> NodeFactory::CreateLatencyNode(uint8_t node_id) {
     used_ids_.push_back(node_id);
 
@@ -114,8 +128,12 @@ std::unique_ptr<LatencyMeasurementNode> NodeFactory::CreateLatencyNode(uint8_t n
 
     auto node = std::make_unique<LatencyMeasurementNode>(node_id, std::move(std::make_unique<SocketCANTransceiver>(socket_can_interfaces_[0], true)), node_info);
 
-    auto latency_response = std::make_unique<SResponsePrimitiveEmpty>();
-    node->Subscribe(std::move(latency_response));
+    return node;
+}
+
+std::unique_ptr<LatencyMeasurementNode> NodeFactory::CreateLatencyResponseNode(uint8_t node_id) {
+
+    auto node = CreateLatencyNode(node_id);
 
     auto latency_request = std::make_unique<SRequestPrimitiveEmpty>();
     node->Subscribe(std::move(latency_request));
