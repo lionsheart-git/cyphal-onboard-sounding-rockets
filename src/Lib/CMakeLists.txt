@@ -25,8 +25,13 @@ set_target_properties(GTest PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(GTest PUBLIC ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
+# GFlags
+add_subdirectory(gflags)
+
 # Google Benchmark
 add_subdirectory(benchmark)
 
 # Glog
 add_subdirectory(glog)
+set(ENV{GLOG_logtostderr} 1)
+set(ENV{GLOG_log_dir} LOG_DIRECTORY)

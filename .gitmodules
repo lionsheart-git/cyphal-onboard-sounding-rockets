@@ -16,3 +16,6 @@
 [submodule "src/Lib/glog"]
 	path = src/Lib/glog
 	url = git@github.com:google/glog.git
+[submodule "src/Lib/gflags"]
+	path = src/Lib/gflags
+	url = git@github.com:gflags/gflags.git

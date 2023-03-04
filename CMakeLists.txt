@@ -20,6 +20,10 @@ OUTPUT_VARIABLE vcs_revision_id
 OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+# Directory for log files
+set(LOG_DIRECTORY "Log/")
+add_definitions(-DLOG_PATH=\"${CMAKE_CURRENT_SOURCE_DIR}/${LOG_DIRECTORY}\")
+
 # For remote deploys the .git directory is sometimes not transferred.
 # To build anyways the id is set to 1 and not an empty string.
 IF(vcs_revision_id MATCHES "")
