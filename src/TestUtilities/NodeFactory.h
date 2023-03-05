@@ -53,7 +53,7 @@ class NodeFactory {
 
     std::unique_ptr<LatencyMeasurementNode> CreateLatencyNode(uint8_t node_id);
 
-    std::unique_ptr<LatencyMeasurementNode> CreateLatencyRequestNode(uint8_t node_id);
+    std::unique_ptr<LatencyMeasurementNode> CreateLatencyRequestNode(uint8_t node_id, uint64_t interval);
 
     std::unique_ptr<LatencyMeasurementNode> CreateLatencyResponseNode(uint8_t node_id);
 

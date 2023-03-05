@@ -96,14 +96,14 @@ void NodeFactory::AddSocketCanInterface(std::string socket_can_interface) {
     socket_can_interfaces_.push_back(socket_can_interface);
 }
 
-std::unique_ptr<LatencyMeasurementNode> NodeFactory::CreateLatencyRequestNode(uint8_t node_id) {
+std::unique_ptr<LatencyMeasurementNode> NodeFactory::CreateLatencyRequestNode(uint8_t node_id, uint64_t interval) {
 
     auto node = CreateLatencyNode(node_id);
 
     auto latency_response = std::make_unique<SResponsePrimitiveEmpty>();
     node->Subscribe(std::move(latency_response));
 
-    auto primitive_empty = std::make_unique<TLatencyMeasurement>(LATENCY_MEASUREMENT_PORT_ID, 2, MEGA / 2);
+    auto primitive_empty = std::make_unique<TLatencyMeasurement>(LATENCY_MEASUREMENT_PORT_ID, 2, interval);
     node->Schedule(std::move(primitive_empty));
 
     return node;
