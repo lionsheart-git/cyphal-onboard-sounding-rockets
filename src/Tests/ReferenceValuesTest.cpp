@@ -19,7 +19,7 @@ void ReferenceValuesTest::SetUp() {
 
     node_factory_.AddSocketCanInterface("vcan0");
 
-    LOG(INFO) << "Sending Packages every" << MEGA / 5 << " microseconds.";
+    LOG(INFO) << "Sending Packages every " << MEGA / 5 << " microseconds.";
 
     latency_measurement_node_1_ = node_factory_.CreateLatencyRequestNode(1, MEGA / 5);
     latency_measurement_node_2_ = node_factory_.CreateLatencyResponseNode(2);
