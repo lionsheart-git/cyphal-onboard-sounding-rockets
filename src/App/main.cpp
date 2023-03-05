@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     NodeFactory factory;
     factory.AddSocketCanInterface("vcan0");
 
-    auto node = factory.CreateLatencyRequestNode(1);
+    auto node = factory.CreateLatencyRequestNode(1, MEGA / 2);
 
     auto node2 = factory.CreateLatencyResponseNode(2);
 
