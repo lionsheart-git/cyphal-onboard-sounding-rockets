@@ -22,6 +22,8 @@ class ReferenceValuesTest : public ::testing::Test {
     void TearDown() override;
 
     void HandleLoop();
+    void HandleLoop(uint64_t monotonic_time);
+
     void WarmUp(float seconds = 10);
 
     NodeFactory node_factory_;

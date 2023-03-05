@@ -38,16 +38,7 @@ void ReferenceValuesTest::TearDown() {
 void ReferenceValuesTest::HandleLoop() {
     auto monotonic_time = Clock::GetMonotonicMicroseconds();
 
-    // Run a trivial scheduler polling the loops that run the business logic.
-    latency_measurement_node_1_->CheckScheduler(monotonic_time);
-    latency_measurement_node_2_->CheckScheduler(monotonic_time);
-
-    // Manage CAN RX/TX per redundant interface.
-    latency_measurement_node_1_->HandleTxRxQueues(monotonic_time);
-    latency_measurement_node_2_->HandleTxRxQueues(monotonic_time);
-
-    // Run every 5ms to prevent using too much CPU.
-    usleep(TX_PROC_SLEEP_TIME);
+    HandleLoop(monotonic_time);
 }
 
 void ReferenceValuesTest::WarmUp(float seconds) {
@@ -62,4 +53,16 @@ void ReferenceValuesTest::WarmUp(float seconds) {
 
     FLAGS_minloglevel = 0;
 
+}
+void ReferenceValuesTest::HandleLoop(uint64_t monotonic_time) {
+    // Run a trivial scheduler polling the loops that run the business logic.
+    latency_measurement_node_1_->CheckScheduler(monotonic_time);
+    latency_measurement_node_2_->CheckScheduler(monotonic_time);
+
+    // Manage CAN RX/TX per redundant interface.
+    latency_measurement_node_1_->HandleTxRxQueues(monotonic_time);
+    latency_measurement_node_2_->HandleTxRxQueues(monotonic_time);
+
+    // Run every 5ms to prevent using too much CPU.
+    usleep(TX_PROC_SLEEP_TIME);
 }
