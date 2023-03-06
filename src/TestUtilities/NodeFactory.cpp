@@ -128,6 +128,12 @@ std::unique_ptr<LatencyMeasurementNode> NodeFactory::CreateLatencyNode(uint8_t n
 
     auto node = std::make_unique<LatencyMeasurementNode>(node_id, std::move(std::make_unique<SocketCANTransceiver>(socket_can_interfaces_[0], true)), node_info);
 
+    if (socket_can_interfaces_.size() > 1) {
+        for (int i = 1; i < socket_can_interfaces_.size(); ++i) {
+            node->addTransceiver(std::make_unique<SocketCANTransceiver>(socket_can_interfaces_[i], true));
+        }
+    }
+
     return node;
 }
 
