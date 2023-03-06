@@ -2,7 +2,7 @@
 add_library(Canard
         libcanard/libcanard/canard.h libcanard/libcanard/canard.c
         libcanard/libcanard/cavl.h)
-
+set_target_properties(Canard PROPERTIES LINKER_LANGUAGE C)
 target_include_directories(Canard PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libcanard/libcanard/)
 
 # O1Heap
