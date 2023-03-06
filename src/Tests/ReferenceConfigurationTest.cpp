@@ -45,9 +45,6 @@ void ReferenceConfigurationTest::HandleLoop() {
     telemetry_->HandleTxRxQueues(monotonic_time);
     sensors_->HandleTxRxQueues(monotonic_time);
     payload_->HandleTxRxQueues(monotonic_time);
-
-    // Run every 5ms to prevent using too much CPU.
-    usleep(TX_PROC_SLEEP_TIME);
 }
 
 void ReferenceConfigurationTest::WarmUp(float seconds) {

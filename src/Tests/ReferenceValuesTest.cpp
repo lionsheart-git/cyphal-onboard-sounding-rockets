@@ -62,7 +62,4 @@ void ReferenceValuesTest::HandleLoop(uint64_t monotonic_time) {
     // Manage CAN RX/TX per redundant interface.
     latency_measurement_node_1_->HandleTxRxQueues(monotonic_time);
     latency_measurement_node_2_->HandleTxRxQueues(monotonic_time);
-
-    // Run every 5ms to prevent using too much CPU.
-    usleep(TX_PROC_SLEEP_TIME);
 }
