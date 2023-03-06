@@ -22,12 +22,15 @@
 #include "uavcan/node/GetInfo_1_0.h"
 
 int main(int argc, char *argv[]) {
-    google::InitGoogleLogging(argv[0]);
-    FLAGS_alsologtostderr = 1;
-    FLAGS_log_dir = LOG_PATH;
+//    google::InitGoogleLogging(argv[0]);
+//    FLAGS_alsologtostderr = 1;
+//    FLAGS_log_dir = LOG_PATH;
 
     NodeFactory factory;
     factory.AddSocketCanInterface("vcan0");
+    factory.AddSocketCanInterface("vcan1");
+    factory.AddSocketCanInterface("vcan2");
+
 
     auto node = factory.CreateLatencyRequestNode(1, MEGA / 2);
 
@@ -72,7 +75,7 @@ int main(int argc, char *argv[]) {
 //        node4->HandleTxRxQueues();
 
         // Run every 5ms to prevent using too much CPU.
-        usleep(TX_PROC_SLEEP_TIME);
+        // usleep(TX_PROC_SLEEP_TIME);
 
     }
 }
