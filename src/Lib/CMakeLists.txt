@@ -2,7 +2,7 @@
 add_library(Canard
         libcanard/libcanard/canard.h libcanard/libcanard/canard.c
         libcanard/libcanard/cavl.h)
-set_target_properties(Canard PROPERTIES LINKER_LANGUAGE C)
+set_target_properties(Canard PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(Canard PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libcanard/libcanard/)
 
 # O1Heap
@@ -26,10 +26,10 @@ set_target_properties(GTest PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(GTest PUBLIC ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 # GFlags
-add_subdirectory(gflags)
+# add_subdirectory(gflags)
 
 # Google Benchmark
-add_subdirectory(benchmark)
+# add_subdirectory(benchmark)
 
 # Glog
 add_subdirectory(glog)
