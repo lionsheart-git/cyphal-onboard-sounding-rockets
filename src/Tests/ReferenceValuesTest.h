@@ -42,7 +42,7 @@ TEST_F(ReferenceValuesTest, ReferenceLatencyAndJitter) {
 
     WarmUp();
 
-    auto end_at = Clock::GetMonotonicMicroseconds() + static_cast<uint64_t>(61 * MEGA);
+    auto end_at = Clock::GetMonotonicMicroseconds() + static_cast<uint64_t>(60 * MEGA);
 
     while (Clock::GetMonotonicMicroseconds() < end_at) {
         HandleLoop();
@@ -52,7 +52,7 @@ TEST_F(ReferenceValuesTest, ReferenceLatencyAndJitter) {
 
 TEST_F(ReferenceValuesTest, ReferenceDatarate) {
 
-    WarmUp(5);
+    WarmUp();
 
     size_t data_size = 256;
     int8_t random_data[256];
@@ -86,8 +86,6 @@ TEST_F(ReferenceValuesTest, ReferenceDatarate) {
 
 TEST_F(ReferenceValuesTest, MaxNumberNodes) {
 
-    WarmUp();
-
     std::vector<std::unique_ptr<Node>> nodes;
 
     for (int i = 3; i < 128; ++i) {
@@ -100,9 +98,27 @@ TEST_F(ReferenceValuesTest, MaxNumberNodes) {
         node->StartNode(started_at);
     }
 
-    auto end_at = Clock::GetMonotonicMicroseconds() + static_cast<uint64_t>(61 * MEGA);
+    // Custom WarmUp
+    FLAGS_minloglevel = 10;
+
+    auto end_at = Clock::GetMonotonicMicroseconds() + static_cast<uint64_t>(10 * 1000000);
 
     uint64_t monotonic_time;
+
+    while (Clock::GetMonotonicMicroseconds() < end_at) {
+        monotonic_time = Clock::GetMonotonicMicroseconds();
+
+        HandleLoop(monotonic_time);
+
+        for (auto const & node : nodes) {
+            node->CheckScheduler(monotonic_time);
+            node->HandleTxRxQueues(monotonic_time);
+        }
+    }
+
+    FLAGS_minloglevel = 0;
+
+    end_at = Clock::GetMonotonicMicroseconds() + static_cast<uint64_t>(240 * MEGA);
 
     do {
         monotonic_time = Clock::GetMonotonicMicroseconds();
