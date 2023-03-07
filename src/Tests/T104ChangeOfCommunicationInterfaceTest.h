@@ -37,7 +37,7 @@ TEST_F(T104ChangeOfCommunicationInterfaceTest, CommuicationInterfaceChange) {
 
     WarmUp();
 
-    auto end_at = Clock::GetMonotonicMicroseconds() + static_cast<uint64_t>(61 * MEGA);
+    auto end_at = Clock::GetMonotonicMicroseconds() + static_cast<uint64_t>(60 * MEGA);
 
     while (Clock::GetMonotonicMicroseconds() < end_at) {
         HandleLoop();
