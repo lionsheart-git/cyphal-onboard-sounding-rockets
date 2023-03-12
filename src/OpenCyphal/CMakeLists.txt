@@ -14,7 +14,7 @@ add_library(OpenCyphal
         TByteArray.cpp TByteArray.h
         PUavcanPrimitiveEmpty.cpp PUavcanPrimitiveEmpty.h
         SRequestPrimitiveEmpty.cpp SRequestPrimitiveEmpty.h
-        SResponsePrimitiveEmpty.cpp SResponsePrimitiveEmpty.h)
+        SResponsePrimitiveEmpty.cpp SResponsePrimitiveEmpty.h SByteArray.cpp SByteArray.h)
 
 target_include_directories(OpenCyphal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
