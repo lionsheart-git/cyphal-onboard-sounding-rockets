@@ -5,4 +5,4 @@ add_executable(UnitTests Tests.cpp
         ReferenceValuesTest.cpp ReferenceValuesTest.h
         T104ChangeOfCommunicationInterfaceTest.cpp T104ChangeOfCommunicationInterfaceTest.h)
 
-target_link_libraries(UnitTests GTest SocketCAN TestUtilities OpenCyphal glog)
+target_link_libraries(UnitTests gtest gtest_main SocketCAN TestUtilities OpenCyphal glog)
