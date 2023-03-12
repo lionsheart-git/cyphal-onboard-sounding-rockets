@@ -25,6 +25,9 @@ class ReferenceConfigurationTest : public ::testing::Test {
 
     NodeFactory node_factory_;
 
+    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_1_;
+    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_2_;
+
     std::unique_ptr<Node> flight_computer_;
     std::unique_ptr<Node> telemetry_;
     std::unique_ptr<Node> sensors_;
