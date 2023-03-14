@@ -1,7 +1,6 @@
-add_executable(UnitTests Tests.cpp
-        Tests.h
+add_executable(UnitTests
         ReferenceConfigurationTest.cpp ReferenceConfigurationTest.h
-        SocketCanTest.cpp SocketCanTest.h
+        SocketCanTest.h
         ReferenceValuesTest.cpp ReferenceValuesTest.h
         T104ChangeOfCommunicationInterfaceTest.cpp T104ChangeOfCommunicationInterfaceTest.h)
 
