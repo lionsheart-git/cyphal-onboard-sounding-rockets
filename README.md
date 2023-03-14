@@ -68,9 +68,9 @@ This repository contains the written code, tests and scripts that were used in t
 Make sure that the repository was pulled with all submodules.
 
 #### Building
-* CMake
-* C++-Compiler (gcc preferred)
-* Linux-CAN / SocketCAN (Linux kernel)
+* CMake (tested with cmake 3.22.1)
+* C++-Compiler (tested with gcc 11.3.0)
+* Linux-CAN / SocketCAN (tested with Ubuntu 22.04.1 LTS and linux kernel 5.15.0-67-generic)
 
 #### Monitoring
 * Yakut
