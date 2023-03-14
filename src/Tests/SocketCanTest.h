@@ -11,10 +11,10 @@
 
 #include "SocketCANTransceiver.h"
 
-class SocketCANTest {
-
-};
-
+/**
+ * @test SendingReceivingCanardFrames
+ * @brief Checks if sending and receiving of canard frames works.
+ */
 TEST(SocketCANTest, SendingReceivingCanardFrames) {
     SocketCANTransceiver sender("vcan0", true);
     SocketCANTransceiver receiver("vcan0", true);

@@ -31,10 +31,6 @@ void ReferenceValuesTest::SetUp() {
 
 }
 
-void ReferenceValuesTest::TearDown() {
-    Test::TearDown();
-}
-
 void ReferenceValuesTest::HandleLoop() {
     auto monotonic_time = Clock::GetMonotonicMicroseconds();
 

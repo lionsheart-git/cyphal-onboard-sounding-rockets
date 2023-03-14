@@ -15,29 +15,57 @@
 #include "NodeFactory.h"
 #include "TByteArray.h"
 
+/**
+ * @class ReferenceValuesTest
+ * @brief Test for determining reference values.
+ */
 class ReferenceValuesTest
     : public ::testing::Test {
 
   protected:
-    void SetUp() override;
-    void TearDown() override;
 
+    /**
+     * @brief Initializes logging and all variables.
+     */
+    void SetUp() override;
+
+    /**
+     * @brief Handles the scheduler and tx/rx loops for all nodes.
+     */
     void HandleLoop();
+    /**
+     * @brief Handles the scheduler and tx/rx loops for all nodes.
+     *
+     * @param monotonic_time Current time to check with.
+     */
     void HandleLoop(uint64_t monotonic_time);
 
+    /**
+     * @brief Warm up phase for all nodes before the tests start.
+     *
+     * @param seconds Duration of warm up.
+     */
     void WarmUp(float seconds = 10);
 
-    NodeFactory node_factory_;
+    NodeFactory node_factory_; /**< Node factory for node creation. */
 
-    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_1_;
-    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_2_;
+    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_1_; /**< First latency measurement node. */
+    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_2_; /**< Second latency measurement node. */
 };
 
+/**
+ * @test VariablesNotNullpointers
+ * @brief Checks that no variable is a null pointer.
+ */
 TEST_F(ReferenceValuesTest, VariablesNotNullpointers) {
     ASSERT_NE(latency_measurement_node_1_, nullptr);
     ASSERT_NE(latency_measurement_node_2_, nullptr);
 }
 
+/**
+ * @test ReferenceLatencyAndJitter
+ * @brief Runs only the latency nodes for 60 seconds while logging the latency measurements.
+ */
 TEST_F(ReferenceValuesTest, ReferenceLatencyAndJitter) {
 
     WarmUp();
@@ -50,6 +78,12 @@ TEST_F(ReferenceValuesTest, ReferenceLatencyAndJitter) {
 
 }
 
+/**
+ * @test ReferenceDatarate
+ * @brief Determines a maximum data rate through publishing byte arrays.
+ *
+ * Runs the latency measurement nodes and a node publishing byte arrays as fast as it can. The latency is logged.
+ */
 TEST_F(ReferenceValuesTest, ReferenceDatarate) {
 
     WarmUp();
@@ -84,6 +118,12 @@ TEST_F(ReferenceValuesTest, ReferenceDatarate) {
 
 }
 
+/**
+ * @test MaxNumberNodes
+ * @brief Tries to find the maximum number of nodes.
+ *
+ * Creates as many nodes as it can without any on misbehaving.
+ */
 TEST_F(ReferenceValuesTest, MaxNumberNodes) {
 
     std::vector<std::unique_ptr<Node>> nodes;

@@ -33,10 +33,6 @@ void T104ChangeOfCommunicationInterfaceTest::SetUp() {
 
 }
 
-void T104ChangeOfCommunicationInterfaceTest::TearDown() {
-    Test::TearDown();
-}
-
 void T104ChangeOfCommunicationInterfaceTest::HandleLoop() {
     auto monotonic_time = Clock::GetMonotonicMicroseconds();
 

@@ -15,25 +15,52 @@
 #include "NodeFactory.h"
 #include "Clock.h"
 
+/**
+ * @class T104ChangeOfCommunicationInterfaceTest
+ * @brief Tests for test case T104.
+ */
 class T104ChangeOfCommunicationInterfaceTest : public ::testing::Test {
 
   protected:
+    /**
+     * @brief Initializes logging and all variables.
+     */
     void SetUp() override;
-    void TearDown() override;
 
+    /**
+     * @brief Handles the scheduler and tx/rx loops for all nodes.
+     */
     void HandleLoop();
+
+    /**
+     * @brief Handles the scheduler and tx/rx loops for all nodes.
+     *
+     * @param monotonic_time Current time to check with.
+     */
     void HandleLoop(uint64_t monotonic_time);
 
+    /**
+     * @brief Warm up phase for all nodes before the tests start.
+     *
+     * @param seconds Duration of warm up.
+     */
     void WarmUp(float seconds = 10);
 
-    NodeFactory node_factory_;
+    NodeFactory node_factory_; /**< Node factory for node creation. */
 
-    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_1_;
-    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_2_;
+    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_1_; /**< First latency measurement node. */
+    std::unique_ptr<LatencyMeasurementNode> latency_measurement_node_2_; /**< Second latency measurement node. */
 
 };
 
-TEST_F(T104ChangeOfCommunicationInterfaceTest, CommuicationInterfaceChange) {
+/**
+ * @test CommunicationInterfaceChange
+ * @brief Tests the influence of the loss of a communication interface on nodes.
+ *
+ * Make sure the CAN_REDUNDANCY_FACTOR is set to 3.
+ * The disabling of the interface has to be done manually.
+ */
+TEST_F(T104ChangeOfCommunicationInterfaceTest, CommunicationInterfaceChange) {
 
     WarmUp();
 

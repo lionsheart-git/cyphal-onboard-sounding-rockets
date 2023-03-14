@@ -23,7 +23,6 @@ void ReferenceConfigurationTest::SetUp() {
 
     node_factory_.AddSocketCanInterface("vcan0");
 
-
     LOG(INFO) << "Sending Packages every " << MEGA / 5 << " microseconds.";
 
     latency_measurement_node_1_ = node_factory_.CreateLatencyRequestNode(1, MEGA / 5);
@@ -45,10 +44,6 @@ void ReferenceConfigurationTest::SetUp() {
     sensors_->StartNode(started_at);
     redundant_sensors_->StartNode(started_at);
     payload_->StartNode(started_at);
-}
-
-void ReferenceConfigurationTest::TearDown() {
-    Test::TearDown();
 }
 
 void ReferenceConfigurationTest::HandleLoop() {
@@ -134,7 +129,6 @@ void inline ReferenceConfigurationTest::SetUpSensors() {
 
     auto byte_array = std::make_unique<TByteArray>(SENSOR_DATA_PORT_ID, random_data, data_size, MEGA / 100);
     sensors_->Schedule(std::move(byte_array));
-
 
 }
 void ReferenceConfigurationTest::SetUpRedundantSensors() {
