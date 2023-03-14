@@ -13,7 +13,8 @@
  * @class SMessageGetInfo
  * @brief Subscribe to get info request messages.
  */
-class SMessageGetInfo : public SMessage {
+class SMessageGetInfo
+    : public SMessage {
 
   public:
     /**

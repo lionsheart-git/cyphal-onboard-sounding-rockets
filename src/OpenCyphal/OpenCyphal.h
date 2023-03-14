@@ -23,6 +23,10 @@
 #include "CanardTransceiver.h"
 #include "CanardTransferReceiver.h"
 
+/**
+ * @class OpenCyphal
+ * @brief Base class for all OpenCyphal communication.
+ */
 class OpenCyphal {
   public:
     /**

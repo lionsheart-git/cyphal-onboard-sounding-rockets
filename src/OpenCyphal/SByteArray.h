@@ -11,9 +11,18 @@
 
 #include "SMessage.h"
 
+/**
+ * @class SByteArray
+ * @brief Subscribing to a new byte array.
+ */
 class SByteArray : public SMessage {
 
   public:
+    /**
+     * @brief Subscribe message for byte arrays.
+     *
+     * @param port_id Port ID to subscribe to.
+     */
     explicit SByteArray(CanardPortID port_id);
 
 };

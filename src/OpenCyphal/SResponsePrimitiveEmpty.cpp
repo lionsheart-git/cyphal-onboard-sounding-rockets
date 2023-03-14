@@ -11,9 +11,9 @@
 #include "Macros.h"
 
 SResponsePrimitiveEmpty::SResponsePrimitiveEmpty()
-: SMessage(CanardTransferKindResponse,
-           LATENCY_MEASUREMENT_PORT_ID,
-           uavcan_primitive_Empty_1_0_EXTENT_BYTES_,
-           CANARD_DEFAULT_TRANSFER_ID_TIMEOUT_USEC) {
+    : SMessage(CanardTransferKindResponse,
+               LATENCY_MEASUREMENT_PORT_ID,
+               uavcan_primitive_Empty_1_0_EXTENT_BYTES_,
+               CANARD_DEFAULT_TRANSFER_ID_TIMEOUT_USEC) {
 
 }

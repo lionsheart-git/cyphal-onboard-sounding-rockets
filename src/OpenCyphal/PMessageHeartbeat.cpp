@@ -8,8 +8,7 @@
 
 #include "Macros.h"
 PMessageHeartbeat::PMessageHeartbeat(Node const &parent_node) :
-    node_(&parent_node), started_at_(), transfer_id_(0), serialized_()
-{
+    node_(&parent_node), started_at_(), transfer_id_(0), serialized_() {
 }
 
 CanardTransferMetadata PMessageHeartbeat::Metadata() {

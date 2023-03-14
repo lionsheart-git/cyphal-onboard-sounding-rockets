@@ -12,7 +12,7 @@
 
 OpenCyphal::OpenCyphal(uint8_t node_id, std::unique_ptr<CanardTransceiver> transceiver)
     : o1heap_allocator_(),
-    instance_(canardInit(&memAllocate, &memFree)), transfer_receiver_() {
+      instance_(canardInit(&memAllocate, &memFree)), transfer_receiver_() {
 
     o1heap_allocator_ = o1heapInit(heap_arena.data(), sizeof(heap_arena));
 
@@ -41,7 +41,7 @@ int32_t OpenCyphal::Publish(CanardMicrosecond const tx_deadline_usec,
                             CanardTransferMetadata const *const metadata,
                             size_t const payload_size,
                             void const *const payload) {
-    //@todo Figure out how to deal with the failing of a push to one tx queue.
+    // Figure out how to deal with the failing of a push to one tx queue.
     int32_t retval = 0;
     for (uint8_t ifidx = 0; ifidx < CAN_REDUNDANCY_FACTOR; ifidx++) {
         retval = Publish(tx_deadline_usec, metadata, payload_size, payload, ifidx);
@@ -102,7 +102,8 @@ int32_t OpenCyphal::HandleTxRxQueues(uint64_t monotonic_time) {
         CanardFrame frame = {0};
         uint8_t buf[CANARD_MTU_CAN_FD] = {0};
         uint64_t out_timestamp_usec;
-        int16_t socketcan_result = transceiver_[ifidx]->ReceiveCanardFrame(0, out_timestamp_usec, frame, sizeof(buf), buf);
+        int16_t
+            socketcan_result = transceiver_[ifidx]->ReceiveCanardFrame(0, out_timestamp_usec, frame, sizeof(buf), buf);
         if (socketcan_result == 0)  // The read operation has timed out with no frames, nothing to do here.
         {
             break;
@@ -133,11 +134,11 @@ int32_t OpenCyphal::HandleTxRxQueues(uint64_t monotonic_time) {
 
 uint8_t OpenCyphal::Health() {
     const O1HeapDiagnostics heap_diag = o1heapGetDiagnostics(o1heap_allocator_);
-        if (heap_diag.oom_count > 0) {
-            return uavcan_node_Health_1_0_CAUTION;
-        } else {
-            return uavcan_node_Health_1_0_NOMINAL;
-        }
+    if (heap_diag.oom_count > 0) {
+        return uavcan_node_Health_1_0_CAUTION;
+    } else {
+        return uavcan_node_Health_1_0_NOMINAL;
+    }
 }
 
 void OpenCyphal::addTransferReceiver(CanardTransferReceiver &transfer_receiver) {

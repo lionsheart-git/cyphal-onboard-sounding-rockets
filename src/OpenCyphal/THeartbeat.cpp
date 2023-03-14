@@ -5,8 +5,8 @@
 */
 
 #include "THeartbeat.h"
-THeartbeat::THeartbeat(Node const & node, int64_t interval)
-: heartbeat_(node), interval_(interval) {
+THeartbeat::THeartbeat(Node const &node, int64_t interval)
+    : heartbeat_(node), interval_(interval) {
 
 }
 
@@ -16,7 +16,7 @@ void THeartbeat::Execute(Node &node, uint64_t current_time) {
     node.Publish(
         current_time + MEGA,  // Set transmission deadline 1 second, optimal for heartbeat.
         heartbeat_
-        );
+    );
 }
 
 uint64_t THeartbeat::Interval() const {

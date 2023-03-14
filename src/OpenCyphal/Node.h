@@ -22,7 +22,8 @@ class Task;
  * @class Node
  * @brief Represents a basic cyphal node with its basic functions.
  */
-class Node : public CanardTransferReceiver, public OpenCyphal {
+class Node
+    : public CanardTransferReceiver, public OpenCyphal {
 
     /**
      * @todo Currently a new cyphal class has to be created for every node with a different id and then handed to the
@@ -47,7 +48,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      * @param interface_index Interface index the transfer came from.
      * @param transfer Transfer to process.
      */
-    void ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const & transfer) override;
+    void ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer const &transfer) override;
 
     /**
      * @brief Checks if there are any tasks to run.
@@ -91,7 +92,7 @@ class Node : public CanardTransferReceiver, public OpenCyphal {
      * @param message Message to publish.
      * @return Number of frames enqueued or negated error.
      */
-    int32_t Publish(CanardMicrosecond timeout, IPMessage & message);
+    int32_t Publish(CanardMicrosecond timeout, IPMessage &message);
 
     /**
      * @brief Health value of the Node.

@@ -9,9 +9,17 @@
 
 #include "SMessage.h"
 
-class SRequestPrimitiveEmpty : public SMessage {
+/**
+ * @class SRequestPrimitiveEmpty
+ * @brief Subscribes to request messages for primitive empty's.
+ */
+class SRequestPrimitiveEmpty
+    : public SMessage {
 
   public:
+    /**
+     * @brief Creates new subscription.
+     */
     SRequestPrimitiveEmpty();
 
 };

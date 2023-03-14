@@ -9,9 +9,18 @@
 
 #include "SMessage.h"
 
-class SResponsePrimitiveEmpty : public SMessage {
+/**
+ * @class SResponsePrimitiveEmpty
+ * @brief Subscribes to response messages of primitive empty's.
+ */
+class SResponsePrimitiveEmpty
+    : public SMessage {
 
   public:
+
+    /**
+     * @brief Creates new primitive empty subscription.
+     */
     SResponsePrimitiveEmpty();
 
 };

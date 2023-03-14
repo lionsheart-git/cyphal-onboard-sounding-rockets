@@ -21,7 +21,7 @@ Node::Node(uint8_t node_id, std::unique_ptr<CanardTransceiver> transceiver, uavc
     std::unique_ptr<SMessageGetInfo> getInfo = std::make_unique<SMessageGetInfo>();
     const int8_t res = Subscribe(std::move(getInfo));
     if (res < 0) {
-        //@todo Throw some kind of exception.
+        // Throw some kind of exception.
         // return -res;
     }
 
@@ -40,7 +40,11 @@ void Node::ProcessReceivedTransfer(uint8_t interface_index, CanardRxTransfer con
             if (res >= 0) {
                 CanardTransferMetadata meta = transfer.metadata;
                 meta.transfer_kind = CanardTransferKindResponse;
-                OpenCyphal::Publish(transfer.timestamp_usec + MEGA, &meta, serialized_size, serialized, interface_index);
+                OpenCyphal::Publish(transfer.timestamp_usec + MEGA,
+                                    &meta,
+                                    serialized_size,
+                                    serialized,
+                                    interface_index);
             } else {
                 assert(false);
             }
@@ -71,7 +75,7 @@ uavcan_node_GetInfo_Response_1_0 Node::ProcessRequestNodeGetInfo() {
 
 void Node::CheckScheduler(CanardMicrosecond monotonic_time) {
     if (online_) {
-        for (auto & task : schedule_) {
+        for (auto &task : schedule_) {
             if (monotonic_time >= task->NextRun()) {
                 task->UpdateNextRun(monotonic_time);
                 task->Execute(*this, monotonic_time);
@@ -96,10 +100,10 @@ uint8_t Node::Health() {
 int8_t Node::Subscribe(std::unique_ptr<SMessage> message) {
 
     int8_t const res = OpenCyphal::Subscribe(message->TransferKind(),
-                      message->PortID(),
-                      message->Extent(),
-                      message->TransferIDTimeout(),
-                      message->Subscription());
+                                             message->PortID(),
+                                             message->Extent(),
+                                             message->TransferIDTimeout(),
+                                             message->Subscription());
 
     subscribers_.push_back(std::move(message));
 
