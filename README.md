@@ -3,7 +3,7 @@
 
 <a href="https://commons.wikimedia.org/wiki/File:Siegel_TU_Braunschweig_transparent.svg#/media/Datei:Siegel_TU_Braunschweig_transparent.svg">
     <img align="right" width="300" height="" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Siegel_TU_Braunschweig_transparent.svg/1200px-Siegel_TU_Braunschweig_transparent.svg.png" alt="Siegel TU Braunschweig transparent.svg">
-</a><br>
+</a>
 
 **Supervisor:**
 * [Prof. Dr.-Ing. Lars Wolf](https://www.ibr.cs.tu-bs.de/users/wolf/)
