@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(SocketCAN
+project("Cyphal Onboard Sounding Rockets"
         VERSION 0.1
         DESCRIPTION "Simulation of a Cyphal netowrk with linux-can / SocketCAN"
         LANGUAGES C CXX)
