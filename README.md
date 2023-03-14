@@ -43,10 +43,10 @@ real-time system.
 This repository contains the written code, tests and scripts that were used in the bachelor thesis.
 
 ```
-├── Doc <- Documentation is generated here.
+├── Doc <- Documentation is generated here
 │  └── html
-├── Log <- Glog loggs are safed here.
-├── Scripts  <- Contains the scripts for setting up the can interfaces and selecting a node.
+├── Log <- Glog loggs are safed here
+├── Scripts  <- Contains the scripts for setting up the can interfaces and selecting a node
 │  ├── select-node-id.sh
 │  └── start-vcans.sh
 ├── src <- The sourcecode
@@ -55,11 +55,11 @@ This repository contains the written code, tests and scripts that were used in t
 │  ├── OpenCyphal <- libcanard wrapper and abstraction layers for easy testing
 │  ├── SocketCAN <- SocketCAN c++ wrapper
 │  ├── Tests <- Tests
-│  ├── TestUtilities <- Utilites needed for the tests.
-│  └── Utility <- File containg macros for configuration.
+│  ├── TestUtilities <- Utilites needed for the tests
+│  └── Utility <- File containg macros for configuration
 ├── CMakeLists.txt <- Root CMakeList.txt
-├── Doxyfile <- Doxyfile for creating documentation with doxygen.
-└── README.md <- This Readme.
+├── Doxyfile <- Doxyfile for creating documentation with doxygen
+└── README.md <- This Readme
 ```
 
 ## Running the code
