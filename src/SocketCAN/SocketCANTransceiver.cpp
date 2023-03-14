@@ -8,13 +8,12 @@
 
 #include "SocketCANTransceiver.h"
 
-SocketCANTransceiver::SocketCANTransceiver(const std::string& ifrName, bool can_fd)
+SocketCANTransceiver::SocketCANTransceiver(const std::string &ifrName, bool can_fd)
     : socket_(0) {
     socket_ = socketcanOpen(ifrName.c_str(), can_fd);
     ifrName_ = ifrName;
     can_fd_ = can_fd;
 }
-
 
 SocketCANTransceiver::SocketCANTransceiver(SocketCANTransceiver const &other_transceiver)
     : socket_(0), ifrName_(other_transceiver.ifrName_), can_fd_(other_transceiver.can_fd_) {
