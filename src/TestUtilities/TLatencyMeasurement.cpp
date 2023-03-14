@@ -15,7 +15,7 @@ uint64_t TLatencyMeasurement::Interval() const {
 
 void TLatencyMeasurement::Execute(Node &node, uint64_t current_time) {
 
-    //@todo Remove cast need for latency measurement
+    // Remove cast need for latency measurement
     auto & latency_node =  dynamic_cast<LatencyMeasurementNode&>(node);
 
     latency_node.latency_[primitive_empty_.Metadata().transfer_id % 32] = Clock::GetMonotonicMicroseconds();

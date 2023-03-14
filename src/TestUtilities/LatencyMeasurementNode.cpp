@@ -22,7 +22,11 @@ void LatencyMeasurementNode::ProcessReceivedTransfer(uint8_t interface_index, Ca
             meta.transfer_kind = CanardTransferKindResponse;
 
             PUavcanPrimitiveEmpty answer(meta);
-            OpenCyphal::Publish(transfer.timestamp_usec + MEGA, &meta, answer.SerializedSize(), answer.SerializedMessage(), interface_index);
+            OpenCyphal::Publish(transfer.timestamp_usec + MEGA,
+                                &meta,
+                                answer.SerializedSize(),
+                                answer.SerializedMessage(),
+                                interface_index);
             // Publish(interface_index, transfer.timestamp_usec + MEGA, answer);
         } else if (transfer.metadata.port_id == LATENCY_MEASUREMENT_PORT_ID + 1) {
             LOG(INFO) << "Got latency response from " << transfer.metadata.remote_node_id <<
@@ -42,6 +46,6 @@ void LatencyMeasurementNode::ProcessReceivedTransfer(uint8_t interface_index, Ca
 LatencyMeasurementNode::LatencyMeasurementNode(uint8_t node_id,
                                                std::unique_ptr<CanardTransceiver> transceiver,
                                                uavcan_node_GetInfo_Response_1_0 info)
-                                               : Node(node_id, std::move(transceiver), info) {
+    : Node(node_id, std::move(transceiver), info) {
 
 }

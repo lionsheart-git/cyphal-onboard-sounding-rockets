@@ -27,7 +27,7 @@ NodeFactory::NodeFactory(uint8_t *used_ids, size_t size) {
 std::unique_ptr<Node> NodeFactory::CreateNode() {
 
     std::default_random_engine generator;
-    std::uniform_int_distribution<uint8_t> distribution(0,125); // 127 - 2 for reserved addresses
+    std::uniform_int_distribution<uint8_t> distribution(0, 125); // 127 - 2 for reserved addresses
 
     uint8_t random_id = distribution(generator);
 
@@ -62,11 +62,14 @@ std::unique_ptr<Node> NodeFactory::CreateNode(uint8_t node_id) {
     GetUniqueID(node_info.unique_id);
 
 //    if (transceiver_[0] == nullptr && socket_can_interfaces_.empty()) {
-//        //@todo Figure out what happens if no transceiver present.
+//        // Figure out what happens if no transceiver present.
 //        // Could be mitigated if transceiver is handed in via constructor.
 //    }
 
-    auto node = std::make_unique<Node>(node_id, std::move(std::make_unique<SocketCANTransceiver>(socket_can_interfaces_[0], true)), node_info);
+    auto node = std::make_unique<Node>(node_id,
+                                       std::move(std::make_unique<SocketCANTransceiver>(socket_can_interfaces_[0],
+                                                                                        true)),
+                                       node_info);
 
     return node;
 }
@@ -126,7 +129,11 @@ std::unique_ptr<LatencyMeasurementNode> NodeFactory::CreateLatencyNode(uint8_t n
 
     GetUniqueID(node_info.unique_id);
 
-    auto node = std::make_unique<LatencyMeasurementNode>(node_id, std::move(std::make_unique<SocketCANTransceiver>(socket_can_interfaces_[0], true)), node_info);
+    auto node = std::make_unique<LatencyMeasurementNode>(node_id,
+                                                         std::move(std::make_unique<SocketCANTransceiver>(
+                                                             socket_can_interfaces_[0],
+                                                             true)),
+                                                         node_info);
 
     if (socket_can_interfaces_.size() > 1) {
         for (int i = 1; i < socket_can_interfaces_.size(); ++i) {
