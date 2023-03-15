@@ -79,9 +79,10 @@ Make sure that the repository was pulled with all submodules.
 ### Running the tests
 
 Loading or building the CMakeList.txt in the root directory gives access to all test targets. They can be selected individually or
-run all at once by choosing the UnitTests target.
+run all at once by choosing the UnitTests target. Please be aware that test T104ChangeOfCommunicationInterfaceTest needs manual
+intervention and results gathered by running the UnitTest target are not correct. This test should be run individually.
 
-The exact steps to run each test can be found in the bachelor thesis.
+The exact steps to run each test can be found in the [Running-Tests.md](Doc/Running-Tests.md) and the bachelor thesis.
 
 ### Known problems
 
