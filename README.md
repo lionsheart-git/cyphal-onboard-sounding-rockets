@@ -1,18 +1,7 @@
-# Cyphal Onboard Sounding Rockets, Technische Universität Braunschweig (Spring 2023)
+# Cyphal Onboard Sounding Rockets
 ## General Information
 
-<a href="https://commons.wikimedia.org/wiki/File:Siegel_TU_Braunschweig_transparent.svg#/media/Datei:Siegel_TU_Braunschweig_transparent.svg">
-    <img align="right" width="300" height="" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Siegel_TU_Braunschweig_transparent.svg/1200px-Siegel_TU_Braunschweig_transparent.svg.png" alt="Siegel TU Braunschweig transparent.svg">
-</a>
-
-**Supervisor:**
-* [Prof. Dr.-Ing. Lars Wolf](https://www.ibr.cs.tu-bs.de/users/wolf/)
-
-**Institutions:**
-* [TU Braunschweig](https://www.tu-braunschweig.de/informatik-bsc)
-* [Institute of Operating Systems and Computer Networks](https://www.ibr.cs.tu-bs.de)
-
-**Bachelor Thesis Topic:**
+**Topic:**
 
 (German): Implementierung und Evaluation des Cyphal Protokolls für Experimentalraketen
 
@@ -40,7 +29,7 @@ real-time system.
 
 ## Contents of this repository
 
-This repository contains the written code, tests and scripts that were used in the bachelor thesis.
+This repository contains the written code, tests and scripts that were used in the white paper.
 
 ```
 ├── Doc <- Documentation is generated here
@@ -82,7 +71,7 @@ Loading or building the CMakeList.txt in the root directory gives access to all 
 run all at once by choosing the UnitTests target. Please be aware that test T104ChangeOfCommunicationInterfaceTest needs manual
 intervention and results gathered by running the UnitTest target are not correct. This test should be run individually.
 
-The exact steps to run each test can be found in the [Running-Tests.md](Doc/Running-Tests.md) and the bachelor thesis.
+The exact steps to run each test can be found in the [Running-Tests.md](Doc/Running-Tests.md) and the white paper.
 
 ### Known problems
 
